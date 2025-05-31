@@ -8,4 +8,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Commands\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommandDotNet" Version="8.1.1" />
+      <PackageReference Include="CommandDotNet.IoC.MicrosoftDependencyInjection" Version="7.1.0" />
+      <PackageReference Include="CommandDotNet.NameCasing" Version="5.1.0" />
+      <PackageReference Include="CommandDotNet.Spectre" Version="4.1.0" />
+    </ItemGroup>
+
 </Project>
