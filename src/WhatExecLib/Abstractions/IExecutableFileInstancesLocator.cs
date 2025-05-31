@@ -8,26 +8,27 @@
  */
 
 using System.Collections.Generic;
+using System.IO;
 
 namespace WhatExecLib.Abstractions
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IExecutableFileLocator
+    public interface IExecutableFileInstancesLocator
     {
+        
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="executableName"></param>
         /// <returns></returns>
-        IEnumerable<string> LocateExecutable(string executableName);
+        IEnumerable<string> LocateExecutableInstances(string executableName);
+        
+        IEnumerable<string> LocateExecutableInstancesWithinDrive(DriveInfo driveInfo, string executableName);
+        
+        IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-        IEnumerable<string> LocateAllExecutablesWithinFolder(string folder);
     }
 }
