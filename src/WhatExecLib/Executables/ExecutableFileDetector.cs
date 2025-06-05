@@ -10,8 +10,14 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
+
+#if NET5_0_OR_GREATER
+using System;
 using AlastairLundy.DotExtensions.IO.Unix;
+
+using System.Runtime.Versioning;
+#endif
+
 using WhatExecLib.Executables.Abstractions;
 
 namespace WhatExecLib.Executables
