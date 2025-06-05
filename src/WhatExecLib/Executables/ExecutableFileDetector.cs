@@ -155,6 +155,7 @@ namespace WhatExecLib.Executables
                 return File.GetUnixFileMode(fullPath).IsExecutePermission();
 #pragma warning restore CA1416
 #else
+                
 #endif
             }
 
