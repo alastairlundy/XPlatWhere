@@ -32,6 +32,9 @@ namespace WhatExecLib.Executables
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
+        [UnsupportedOSPlatform("ios")]
+        [UnsupportedOSPlatform("android")]
+        [UnsupportedOSPlatform("browser")]
 #endif
         public bool IsFileExecutable(string filename)
         {
@@ -95,7 +98,11 @@ namespace WhatExecLib.Executables
 #if NET5_0_OR_GREATER
         [UnsupportedOSPlatform("windows")]
         [SupportedOSPlatform("linux")]
+        [SupportedOSPlatform("freebsd")]
         [SupportedOSPlatform("macos")]
+        [UnsupportedOSPlatform("ios")]
+        [UnsupportedOSPlatform("android")]
+        [UnsupportedOSPlatform("browser")]
 #endif
         private bool IsUnixElfFile(string filename)
         {
