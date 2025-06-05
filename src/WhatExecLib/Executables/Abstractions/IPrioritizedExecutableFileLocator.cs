@@ -8,7 +8,7 @@
  */
 
 using System.Collections.Generic;
-using WhatExecLib.Executables;
+using WhatExecLib.Prioritizers;
 
 namespace WhatExecLib.Executables.Abstractions
 {
