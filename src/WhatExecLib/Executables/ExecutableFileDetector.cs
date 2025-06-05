@@ -111,6 +111,9 @@ namespace WhatExecLib.Executables
         [SupportedOSPlatform("macos")]
         [UnsupportedOSPlatform("windows")]
         [UnsupportedOSPlatform("linux")]
+        [UnsupportedOSPlatform("ios")]
+        [UnsupportedOSPlatform("android")]
+        [UnsupportedOSPlatform("browser")]
 #endif
         private bool IsMachOFile(string filename)
         {
@@ -127,6 +130,10 @@ namespace WhatExecLib.Executables
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
+        [SupportedOSPlatform("freebsd")]
+        [UnsupportedOSPlatform("ios")]
+        [UnsupportedOSPlatform("android")]
+        [UnsupportedOSPlatform("browser")]
 #endif
         public bool DoesFileHaveExecutablePermissions(string filename)
         {
