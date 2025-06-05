@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using WhatExecLib.Abstractions;
+using WhatExecLib.Executables;
+using WhatExecLib.Executables.Abstractions;
+using WhatExecLib.Prioritizers;
+using WhatExecLib.Prioritizers.Abstractions;
 
 namespace WhatExecLib.Extensions.DependencyInjection;
 

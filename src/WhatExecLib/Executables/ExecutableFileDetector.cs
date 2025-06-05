@@ -7,18 +7,14 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+
 using System.IO;
 using System.Runtime.InteropServices;
-
-using AlastairLundy.DotExtensions.IO.Unix;
-
-using WhatExecLib.Abstractions;
-
-#if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
+using AlastairLundy.DotExtensions.IO.Unix;
+using WhatExecLib.Executables.Abstractions;
 
-namespace WhatExecLib
+namespace WhatExecLib.Executables
 {
     /// <summary>
     /// 

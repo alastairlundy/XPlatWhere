@@ -9,17 +9,13 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Threading;
 using System.Threading.Tasks;
+using WhatExecLib.Executables.Abstractions;
 
-using WhatExecLib.Abstractions;
-
-namespace WhatExecLib
+namespace WhatExecLib.Executables
 {
     /// <summary>
     /// 

@@ -13,14 +13,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using WhatExecLib.Executables.Abstractions;
 #if NET5_0_OR_GREATER
-using System.Runtime.Versioning;
 #endif
 
-using WhatExecLib.Abstractions;
-
-namespace WhatExecLib
+namespace WhatExecLib.Executables
 {
     /// <summary>
     /// A class to help find an executable when you don't know where it is.
@@ -69,7 +66,7 @@ namespace WhatExecLib
             {
                 tasks[i] = new Task(async void () =>
                 {
-                    bool result = await IsExecutableInDriveAsync(executableName, drives[i].Name, cancellationToken);
+                    bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
 
                     if (result)
                     {
@@ -119,7 +116,7 @@ namespace WhatExecLib
             string output = string.Empty;
             await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
             {
-                bool result = await IsExecutableInDriveAsync(executableName, drive.Name, token);
+                bool result = await IsExecutableWithinDriveAsync(executableName, drive.Name, token);
 
                 if (result)
                 {
@@ -200,7 +197,7 @@ namespace WhatExecLib
         /// <param name="executableName"></param>
         /// <param name="driveName"></param>
         /// <returns></returns>
-        public async Task<bool> IsExecutableInDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
+        public async Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
         {
             DriveInfo driveInfo = new DriveInfo(driveName);
             

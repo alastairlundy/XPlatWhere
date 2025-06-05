@@ -11,15 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-
-using WhatExecLib.Abstractions;
-using WhatExecLib.Models;
-
-#if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
 
-namespace WhatExecLib
+using WhatExecLib.Executables;
+using WhatExecLib.Prioritizers.Abstractions;
+
+namespace WhatExecLib.Prioritizers
 {
     /// <summary>
     /// 
@@ -38,7 +35,7 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public IList<string> Prioritize(ExecutableDirectoryPriority priority, IEnumerable<string> directories)
+        public IList<string> Prioritize(DirectoryPriority priority, IEnumerable<string> directories)
         {
             return Prioritize(priority, directories, null);
         }
@@ -56,22 +53,22 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public IList<string> Prioritize(ExecutableDirectoryPriority priority, IEnumerable<string> directories, string? priorityDirectory)
+        public IList<string> Prioritize(DirectoryPriority priority, IEnumerable<string> directories, string? priorityDirectory)
         {
             switch (priority)
             {
-                case ExecutableDirectoryPriority.SystemDirectories:
-                    return PrioritizeSystemExecutables(directories);
-                case ExecutableDirectoryPriority.UserDirectories:
-                    return PrioritizeUserApplicationExecutables(directories);
-                case ExecutableDirectoryPriority.SpecifiedDirectory:
+                case DirectoryPriority.SystemDirectories:
+                    return PrioritizeSystemDirectories(directories);
+                case DirectoryPriority.UserDirectories:
+                    return PrioritizeUserApplicationDirectories(directories);
+                case DirectoryPriority.SpecifiedDirectory:
                     if (priorityDirectory is not null)
                     {
                         return PrioritizeDirectory(priorityDirectory, directories);
                     }
                     else
                     {
-                        return PrioritizeUserApplicationExecutables(directories);
+                        return PrioritizeUserApplicationDirectories(directories);
                     }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(priority), priority, "Priority not supported");
@@ -111,7 +108,7 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public IList<string> PrioritizeUserApplicationExecutables(IEnumerable<string> directories)
+        public IList<string> PrioritizeUserApplicationDirectories(IEnumerable<string> directories)
         {
             List<string> output = new List<string>();
         
@@ -161,7 +158,7 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public IList<string> PrioritizeSystemExecutables(IEnumerable<string> directories)
+        public IList<string> PrioritizeSystemDirectories(IEnumerable<string> directories)
         {
             List<string> output = new List<string>();
         

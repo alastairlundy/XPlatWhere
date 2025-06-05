@@ -1,6 +1,6 @@
-﻿namespace WhatExecLib.Models
+﻿namespace WhatExecLib.Executables
 {
-    public enum ExecutableDirectoryPriority
+    public enum DirectoryPriority
     {
         SystemDirectories,
         UserDirectories,

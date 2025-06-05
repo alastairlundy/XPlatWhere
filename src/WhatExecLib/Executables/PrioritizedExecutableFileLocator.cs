@@ -15,10 +15,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using WhatExecLib.Abstractions;
-using WhatExecLib.Models;
+using WhatExecLib.Executables.Abstractions;
 
-namespace WhatExecLib
+using WhatExecLib.Executables;
+
+using WhatExecLib.Prioritizers.Abstractions;
+
+namespace WhatExecLib.Executables
 {
     /// <summary>
     /// 
@@ -31,7 +34,7 @@ namespace WhatExecLib
         /// <summary>
         /// 
         /// </summary>
-        public ExecutableDirectoryPriority DirectoryPriority { get; private set; }
+        public DirectoryPriority DirectoryPriority { get; private set; }
         
         /// <summary>
         /// 
@@ -47,7 +50,7 @@ namespace WhatExecLib
         {
             _executableFileDetector = executableFileDetector;
             _directoryListPrioritizer = directoryListPrioritizer;
-            DirectoryPriority = ExecutableDirectoryPriority.SystemDirectories;
+            DirectoryPriority = DirectoryPriority.SystemDirectories;
             PrioritizedDirectories = [];
         }
     
@@ -77,7 +80,7 @@ namespace WhatExecLib
             
             await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
             {
-                bool result = await IsExecutableInDriveAsync(executableName, drive.Name, token);
+                bool result = await IsExecutableWithinDriveAsync(executableName, drive.Name, token);
 
                 if (result)
                 {
@@ -128,7 +131,7 @@ namespace WhatExecLib
                 {
                     try
                     {
-                        bool result = await IsExecutableInDriveAsync(executableName, drives[i].Name, cancellationToken);
+                        bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
 
                         if (result)
                         {
@@ -222,13 +225,13 @@ namespace WhatExecLib
 
         
         
-        public async Task<bool> IsExecutableInDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
+        public async Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
         {
             DriveInfo driveInfo = new DriveInfo(driveName);
             
             DirectoryInfo rootDir = driveInfo.RootDirectory;
 
-            return await Task.Run(async() =>
+            return await Task.Run<bool>(async() =>
             {
                 string[] directories = rootDir.GetDirectories("*", SearchOption.AllDirectories).Select(x => x.FullName).ToArray();
                 
@@ -252,7 +255,7 @@ namespace WhatExecLib
         /// </summary>
         /// <param name="priority"></param>
         /// <param name="directories"></param>
-        public void PrioritizeDirectories(ExecutableDirectoryPriority priority, IEnumerable<string> directories)
+        public void PrioritizeDirectories(DirectoryPriority priority, IEnumerable<string> directories)
         {
             DirectoryPriority = priority;
             PrioritizeDirectories(directories);

@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace WhatExecLib.Abstractions
+namespace WhatExecLib.Executables.Abstractions
 {
     public interface IExecutableFileLocator
     {
@@ -18,10 +16,6 @@ namespace WhatExecLib.Abstractions
         Task<bool> IsExecutableInDirectoryAsync(string executableName, string directoryPath,
             CancellationToken cancellationToken = default);
     
-        Task<bool> IsExecutableInDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default);
-
-        //   IEnumerable<string> LocateAllExecutablesWithinFolder(string folder);
-
-        //   IEnumerable<string> LocateAllExecutablesWithinDrive(DriveInfo driveInfo);
+        Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default);
     }
 }

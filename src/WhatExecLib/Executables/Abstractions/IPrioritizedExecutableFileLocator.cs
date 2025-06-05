@@ -8,18 +8,17 @@
  */
 
 using System.Collections.Generic;
+using WhatExecLib.Executables;
 
-using WhatExecLib.Models;
-
-namespace WhatExecLib.Abstractions
+namespace WhatExecLib.Executables.Abstractions
 {
     public interface IPrioritizedExecutableFileLocator : IExecutableFileLocator
     {
-        ExecutableDirectoryPriority DirectoryPriority { get; }
+        DirectoryPriority DirectoryPriority { get; }
         
         void PrioritizeDirectory(string directory);
         void PrioritizeDirectories(IEnumerable<string> directories);
-        void PrioritizeDirectories(ExecutableDirectoryPriority priority, IEnumerable<string> directories);
+        void PrioritizeDirectories(DirectoryPriority priority, IEnumerable<string> directories);
 
     }
 }

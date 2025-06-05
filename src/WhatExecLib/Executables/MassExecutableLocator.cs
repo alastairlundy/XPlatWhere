@@ -11,16 +11,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-#if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
+using WhatExecLib.Executables.Abstractions;
+#if NET5_0_OR_GREATER
 #endif
 
-using System.Threading.Tasks;
-
-using WhatExecLib.Abstractions;
-
-namespace WhatExecLib
+namespace WhatExecLib.Executables
 {
 
     public class MassExecutableLocator : IMassExecutableLocator
