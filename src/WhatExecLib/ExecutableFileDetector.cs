@@ -105,7 +105,7 @@ namespace WhatExecLib
 #endif
         private bool IsMachOFile(string filename)
         {
-        
+            
         }
     
         /// <summary>
