@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using WhatExecLib.Executables.Abstractions;
+using WhatExecLib.Files.Abstractions;
 #if NET5_0_OR_GREATER
 #endif
 

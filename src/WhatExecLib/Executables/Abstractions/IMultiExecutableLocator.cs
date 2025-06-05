@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace WhatExecLib.Executables.Abstractions
 {
-    public interface IMassExecutableLocator
+    public interface IMultiExecutableLocator
     {
         /// <summary>
         /// 
