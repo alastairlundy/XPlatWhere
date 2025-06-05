@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace WhatExecLib.Abstractions
 {
@@ -24,11 +25,11 @@ namespace WhatExecLib.Abstractions
         /// </summary>
         /// <param name="executableName"></param>
         /// <returns></returns>
-        IEnumerable<string> LocateExecutableInstances(string executableName);
+        Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName);
         
-        IEnumerable<string> LocateExecutableInstancesWithinDrive(DriveInfo driveInfo, string executableName);
+        Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName);
         
-        IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName);
+        Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName);
 
     }
 }

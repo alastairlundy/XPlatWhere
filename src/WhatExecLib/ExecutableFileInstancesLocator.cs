@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 
 using WhatExecLib.Abstractions;
@@ -34,7 +35,7 @@ namespace WhatExecLib
             _executableFileDetector = executableDetector;
             _executableFileLocator = executableFileLocator;
         }
-    
+
         /// <summary>
         /// 
         /// </summary>
@@ -45,19 +46,63 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public IEnumerable<string> LocateExecutableInstances(string executableName)
+        public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
+        {
+            DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
+
+            #if NET5_0_OR_GREATER
+                IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
+            #else
+                IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard21Fallback(executableName, drives);
+            #endif
+
+            return output;
+        }
+
+        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard21Fallback(
+            string executableName, DriveInfo[] drives)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();
-       
-            string[] drives = Directory.GetLogicalDrives();
+            
+            Task<IEnumerable<string>>[] tasks = new Task<IEnumerable<string>>[drives.Length];
 
-            Parallel.ForEach(drives, drive =>
+            for (int i = 0; i < tasks.Length; i++)
             {
-                IList<string> executablesWithinDrive = LocateExecutableInstancesWithinDrive(new DriveInfo(drive), executableName).ToList();
-                
-                if (executablesWithinDrive.Count > 0)
+                tasks[i] = LocateExecutableInstancesWithinDriveAsync(drives[i], executableName);
+            }
+
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                tasks[i].Start();
+            }
+            
+            await Task.WhenAll(tasks);
+
+            foreach (Task<IEnumerable<string>> task in tasks)
+            {
+                foreach (string s in task.Result)
                 {
-                    foreach (string executable in executablesWithinDrive)
+                    output.Add(s);
+                }
+            }
+
+            return output;
+        }
+
+#if NET5_0_OR_GREATER
+        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_Net50_OrNewer(string executableName, DriveInfo[] drives)
+        {
+            ConcurrentBag<string> output = new ConcurrentBag<string>();
+            
+            await Parallel.ForEachAsync(drives, async (drive, token) =>
+            {
+                IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
+
+                IList<string> executablesDriveList = executablesWithinDrive.ToList();
+                
+                if (executablesDriveList.Count > 0)
+                {
+                    foreach (string executable in executablesDriveList)
                     {
                         output.Add(executable);
                     }
@@ -73,30 +118,34 @@ namespace WhatExecLib
                 return output;
             }
         }
+#endif
 
-        public IEnumerable<string> LocateExecutableInstancesWithinDrive(DriveInfo driveInfo, string executableName)
+        public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
         {
-            List<string> output = new List<string>();
+            ConcurrentBag<string> output = new ConcurrentBag<string>();
             
             DirectoryInfo rootDir = driveInfo.RootDirectory;
 
-            foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-            {
-                IEnumerable<string> executables = LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
-
-                foreach (string executable in executables)
+                Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
                 {
-                    if (executable.Equals(executableName))
+                    IEnumerable<string> executables = await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
+
+                    foreach (string executable in executables)
                     {
                         output.Add(executable);
                     }
-                }
-            }
+                });
             
             return output;
         }
 
-        public IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <param name="executableName"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
         {
             List<string> output = new List<string>();
             
@@ -115,8 +164,8 @@ namespace WhatExecLib
                     }
                 }
             }
-            
-            return output;
+
+            return Task.FromResult<IEnumerable<string>>(output);
         }
     }
 }
