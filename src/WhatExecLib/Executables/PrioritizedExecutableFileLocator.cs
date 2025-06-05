@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using WhatExecLib.Executables.Abstractions;
 
 using WhatExecLib.Executables;
-
+using WhatExecLib.Prioritizers;
 using WhatExecLib.Prioritizers.Abstractions;
 
 namespace WhatExecLib.Executables
@@ -129,41 +129,34 @@ namespace WhatExecLib.Executables
             {
                 tasks[i] = new Task(async void () =>
                 {
-                    try
+                    bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
+
+                    if (result)
                     {
-                        bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
+                        DirectoryInfo rootDir = drives[i].RootDirectory;
 
-                        if (result)
-                        {
-                            DirectoryInfo rootDir = drives[i].RootDirectory;
+                        IEnumerable<string> directories = rootDir.GetDirectories("*", SearchOption.AllDirectories)
+                            .Select(x => x.FullName);
 
-                            IEnumerable<string> directories = rootDir.GetDirectories("*", SearchOption.AllDirectories)
-                                .Select(x => x.FullName);
-
-                            IEnumerable<string> prioritizedDirectories =
-                                _directoryListPrioritizer.Prioritize(DirectoryPriority, directories);
+                        IEnumerable<string> prioritizedDirectories =
+                            _directoryListPrioritizer.Prioritize(DirectoryPriority, directories);
                         
-                            foreach (string directory in prioritizedDirectories)
-                            {
-                                bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, directory, cancellationToken);
+                        foreach (string directory in prioritizedDirectories)
+                        {
+                            bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, directory, cancellationToken);
 
-                                if (foundExecutable)
+                            if (foundExecutable)
+                            {
+                                foreach (string file in Directory.GetFiles(directory,"*", SearchOption.AllDirectories))
                                 {
-                                    foreach (string file in Directory.GetFiles(directory,"*", SearchOption.AllDirectories))
+                                    if (file.Equals(executableName))
                                     {
-                                        if (file.Equals(executableName))
-                                        {
-                                            strings.Add(file);
-                                            return;
-                                        }
+                                        strings.Add(file);
+                                        return;
                                     }
                                 }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        throw; // TODO handle exception
                     }
                 });
             }
