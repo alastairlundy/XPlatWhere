@@ -88,7 +88,7 @@ namespace WhatExecLib.Executables
                            IsUnixElfFile(fullPath) || 
                            IsMachOFile(fullPath) ||
                            Path.GetExtension(fullPath) == ".pkg" ||
-                           Path.GetExtension(fullPath) == ".app";
+                           Path.GetExtension(fullPath) == ".appimage";
                 }
             }
 #endif
