@@ -21,12 +21,15 @@ using WhatExecLib.Files.Abstractions;
 namespace WhatExecLib.Executables
 {
 
-    public class MassExecutableLocator : IMassExecutableLocator
+    public class MultiExecutableLocator : IMultiExecutableLocator
     {
+        private readonly IMultiFileLocator _multiFileLocator;
         private readonly IExecutableFileDetector _executableFileDetector;
 
-        public MassExecutableLocator(IExecutableFileDetector executableFileDetector)
+        public MultiExecutableLocator(IMultiFileLocator multiFileLocator,
+            IExecutableFileDetector executableFileDetector)
         {
+            _multiFileLocator = multiFileLocator;
             _executableFileDetector = executableFileDetector;
         }
         
@@ -43,32 +46,9 @@ namespace WhatExecLib.Executables
 #endif
         public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
         {
-            ConcurrentBag<string> output = new ConcurrentBag<string>();
+            IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDirectoryAsync(folder);
 
-            await Task.Run(() =>
-            {
-                string folderPath = Path.GetFullPath(folder);
-        
-                if (Directory.Exists(folderPath) == false)
-                {
-                    throw new DirectoryNotFoundException(folder);
-                }
-        
-                string[] directories = Directory.GetDirectories(folder, "*", SearchOption.AllDirectories);
-        
-                foreach (string directory in directories)
-                {
-                    IEnumerable<string> files = Directory.GetFiles(directory)
-                        .Where(file => _executableFileDetector.IsFileExecutable(file));
-
-                    foreach (string file in files)
-                    {
-                        output.Add(file);
-                    }
-                }
-
-            });
-            return output;
+            return files.Where(file => _executableFileDetector.IsFileExecutable(file));
         }
 
     
@@ -79,24 +59,9 @@ namespace WhatExecLib.Executables
 #endif
         public async Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
         {
-            ConcurrentBag<string> output = new();
+            IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);
 
-            DirectoryInfo rootDir = driveInfo.RootDirectory;
-
-            await Task.Run(() =>
-            {
-                Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
-                {
-                    IEnumerable<string> executables = await LocateAllExecutablesWithinDirectoryAsync(subDir.FullName);
-
-                    foreach (string executable in executables)
-                    {
-                        output.Add(executable);
-                    }
-                });
-            });
-
-            return output;
+            return files.Where(file => _executableFileDetector.IsFileExecutable(file));
         }
     }
 }

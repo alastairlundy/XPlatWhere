@@ -8,14 +8,14 @@ namespace WhatExecLib.Files.Abstractions
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="executableName"></param>
+        /// <param name="fileName"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<string> LocateFileAsync(string executableName, CancellationToken cancellationToken = default);
+        Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default);
 
-        Task<bool> IsFileInDirectoryAsync(string executableName, string directoryPath,
+        Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
             CancellationToken cancellationToken = default);
     
-        Task<bool> IsFileWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default);
+        Task<bool> IsFileWithinDriveAsync(string fileName, string driveName, CancellationToken cancellationToken = default);
     }
 }

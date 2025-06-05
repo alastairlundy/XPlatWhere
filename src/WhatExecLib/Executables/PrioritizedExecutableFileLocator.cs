@@ -67,7 +67,7 @@ namespace WhatExecLib.Executables
 #if NET5_0_OR_GREATER
             string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);            
 #else
-            string output = await LocateExecutableAsync_NetStandard21Fallback(executableName, cancellationToken, drives);
+            string output = await LocateExecutableAsync_NetStandard2XFallback(executableName, cancellationToken, drives);
 #endif
             return output;
         }
@@ -118,7 +118,7 @@ namespace WhatExecLib.Executables
         }
 #endif
 
-        private async Task<string> LocateExecutableAsync_NetStandard21Fallback(string executableName,
+        private async Task<string> LocateExecutableAsync_NetStandard2XFallback(string executableName,
             CancellationToken cancellationToken, DriveInfo[] drives)
         {
             ConcurrentBag<string> strings = new ConcurrentBag<string>();
@@ -233,9 +233,11 @@ namespace WhatExecLib.Executables
 
             return await Task.Run<bool>(async() =>
             {
-                string[] directories = rootDir.GetDirectories("*", SearchOption.AllDirectories).Select(x => x.FullName).ToArray();
+                string[] directories = rootDir.GetDirectories("*", SearchOption.AllDirectories).Select(x => x.FullName)
+                    .ToArray();
                 
-               IEnumerable<string> prioritizedDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, directories, directories.First());
+               IEnumerable<string> prioritizedDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, directories,
+                   directories.First());
                 
                 foreach (string directory in prioritizedDirectories)
                 {
