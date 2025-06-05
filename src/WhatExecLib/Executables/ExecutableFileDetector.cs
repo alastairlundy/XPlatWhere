@@ -70,6 +70,19 @@ namespace WhatExecLib.Executables
                        Path.GetExtension(fullPath) == ".app";
 #pragma warning restore CA1416
             }
+#if NET5_0_OR_GREATER
+            else
+            {
+                if (OperatingSystem.IsFreeBSD())
+                {
+                    return DoesFileHaveExecutablePermissions(fullPath) ||
+                           IsUnixElfFile(fullPath) || 
+                           IsMachOFile(fullPath) ||
+                           Path.GetExtension(fullPath) == ".pkg" ||
+                           Path.GetExtension(fullPath) == ".app";
+                }
+            }
+#endif
 
             return false;
         }
