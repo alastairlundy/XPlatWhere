@@ -7,6 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,44 +46,26 @@ namespace WhatExecLib
         /// <returns></returns>
         public async Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default)
         {
-            string output = string.Empty;
-            
             DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
             
             // Parallel.ForEachAsync isn't supported by .NET Standard 2.1 or earlier, so this is only run on .NET 5+
 #if NET5_0_OR_GREATER
-            await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
-            {
-                    bool result = await IsExecutableInDriveAsync(executableName, drive.Name, token);
-
-                    if (result)
-                    {
-                        DirectoryInfo rootDir = drive.RootDirectory;
-                        
-                        foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                        {
-                            bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName, token);
-
-                            if (foundExecutable)
-                            {
-                                foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
-                                {
-                                    if (file.Name.Equals(executableName))
-                                    {
-                                        output = file.FullName;
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        
-                    }
-            });
+            string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);
 #else
+            string output = await LocateExecutableAsync_NetStandard21Fallback(executableName, cancellationToken, drives);
+#endif
+
+            return output;
+        }
+
+        private async Task<string> LocateExecutableAsync_NetStandard21Fallback(string executableName,
+            CancellationToken cancellationToken, DriveInfo[] drives)
+        {
+            ConcurrentBag<string> strings = new ConcurrentBag<string>();
+            
             Task[] tasks = new Task[drives.Length];
 
-            for (int i = 0; i < drives.Length; i++)
+            for (int i = 0; i < tasks.Length; i++)
             {
                 tasks[i] = new Task(async void () =>
                 {
@@ -102,7 +85,7 @@ namespace WhatExecLib
                                 {
                                     if (file.Name.Equals(executableName))
                                     {
-                                        output = file.FullName;
+                                        strings.Add(file.FullName);
                                         return;
                                     }
                                 }
@@ -112,16 +95,65 @@ namespace WhatExecLib
                 });
             }
 
-            for (int i = 0; i < drives.Length; i++)
+            for (int i = 0; i < tasks.Length; i++)
             {
                 tasks[i].Start();
             }
 
             await Task.WhenAll(tasks);
-#endif
 
-            return output;
+            if (strings.Count > 0)
+            {
+                return strings.First();
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
+
+#if NET5_0_OR_GREATER
+        private async Task<string> LocateExecutableAsync_Net50_OrNewer(string executableName, CancellationToken cancellationToken,
+            DriveInfo[] drives)
+        {
+            string output = string.Empty;
+            await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
+            {
+                bool result = await IsExecutableInDriveAsync(executableName, drive.Name, token);
+
+                if (result)
+                {
+                    DirectoryInfo rootDir = drive.RootDirectory;
+                        
+                    foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
+                    {
+                        bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName, token);
+
+                        if (foundExecutable)
+                        {
+                            foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
+                            {
+                                if (file.Name.Equals(executableName))
+                                {
+                                    output = file.FullName;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (string.IsNullOrEmpty(output) == false)
+            {
+                return output;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+#endif
 
         /// <summary>
         /// 
