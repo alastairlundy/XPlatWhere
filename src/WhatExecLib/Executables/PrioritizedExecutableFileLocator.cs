@@ -200,8 +200,6 @@ namespace WhatExecLib.Executables
             {
                 string[] subDirectories = Directory.GetDirectories(directoryPath, "*", SearchOption.AllDirectories);
                 
-              //  if(PrioritizedDirectories.Count < )
-                
                 IEnumerable<string> prioritizedSubDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, subDirectories,
                     PrioritizedDirectories.First());
                 
