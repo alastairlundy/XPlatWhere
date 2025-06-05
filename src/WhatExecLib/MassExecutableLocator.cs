@@ -11,7 +11,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+#if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
+#endif
+
 using System.Threading.Tasks;
 
 using WhatExecLib.Abstractions;
@@ -23,6 +27,11 @@ namespace WhatExecLib
     {
         private readonly IExecutableFileDetector _executableFileDetector;
 
+        public MassExecutableLocator(IExecutableFileDetector executableFileDetector)
+        {
+            _executableFileDetector = executableFileDetector;
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -34,7 +43,7 @@ namespace WhatExecLib
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public async Task<IEnumerable<string>> LocateAllExecutablesWithinFolderAsync(string folder)
+        public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();
 
@@ -80,7 +89,7 @@ namespace WhatExecLib
             {
                 Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
                 {
-                    IEnumerable<string> executables = await LocateAllExecutablesWithinFolderAsync(subDir.FullName);
+                    IEnumerable<string> executables = await LocateAllExecutablesWithinDirectoryAsync(subDir.FullName);
 
                     foreach (string executable in executables)
                     {

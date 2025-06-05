@@ -21,7 +21,7 @@ public interface IMassExecutableLocator
     /// <param name="folder"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    Task<IEnumerable<string>> LocateAllExecutablesWithinFolderAsync(string folder);
+    Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder);
 
     Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo);
 }
