@@ -149,8 +149,9 @@ namespace WhatExecLib.Executables
             
             foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
             {
-                FileInfo[] files = subDir.GetFiles("*", SearchOption.AllDirectories);
-                IEnumerable<string> executables = files.Where(x => _executableFileDetector.IsFileExecutable(x.Name)).Select(x => x.FullName);
+                IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
+                    .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
+                    .Select(x => x.FullName);
 
                 foreach (string executable in executables)
                 {
