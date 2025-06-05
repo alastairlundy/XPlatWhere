@@ -15,8 +15,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using AlastairLundy.DotExtensions.Collections.Generic.ICollections;
-
 using WhatExecLib.Abstractions;
 using WhatExecLib.Models;
 
@@ -277,7 +275,11 @@ namespace WhatExecLib
         public void PrioritizeDirectories(IEnumerable<string> directories)
         {
             PrioritizedDirectories.Clear();
-            PrioritizedDirectories.AddRange(directories);
+
+            foreach (string directory in directories)
+            {
+                PrioritizedDirectories.Add(directory);
+            }
         }
     }
 }
