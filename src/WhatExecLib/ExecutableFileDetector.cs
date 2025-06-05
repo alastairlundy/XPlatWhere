@@ -9,7 +9,9 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+
 using AlastairLundy.DotExtensions.IO.Unix;
+
 using WhatExecLib.Abstractions;
 
 #if NET5_0_OR_GREATER
@@ -88,7 +90,7 @@ namespace WhatExecLib
 #endif
         private bool IsUnixElfFile(string filename)
         {
-        
+            
         }
 
         /// <summary>
@@ -128,7 +130,7 @@ namespace WhatExecLib
         
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-            
+                
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
