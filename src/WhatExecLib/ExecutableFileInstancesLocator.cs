@@ -53,13 +53,13 @@ namespace WhatExecLib
             #if NET5_0_OR_GREATER
                 IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
             #else
-                IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard21Fallback(executableName, drives);
+                IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard2XFallback(executableName, drives);
             #endif
 
             return output;
         }
 
-        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard21Fallback(
+        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard2XFallback(
             string executableName, DriveInfo[] drives)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();

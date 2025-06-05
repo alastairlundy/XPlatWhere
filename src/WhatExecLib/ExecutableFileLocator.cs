@@ -52,13 +52,13 @@ namespace WhatExecLib
 #if NET5_0_OR_GREATER
             string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);
 #else
-            string output = await LocateExecutableAsync_NetStandard21Fallback(executableName, cancellationToken, drives);
+            string output = await LocateExecutableAsync_NetStandard2XFallback(executableName, cancellationToken, drives);
 #endif
 
             return output;
         }
 
-        private async Task<string> LocateExecutableAsync_NetStandard21Fallback(string executableName,
+        private async Task<string> LocateExecutableAsync_NetStandard2XFallback(string executableName,
             CancellationToken cancellationToken, DriveInfo[] drives)
         {
             ConcurrentBag<string> strings = new ConcurrentBag<string>();
