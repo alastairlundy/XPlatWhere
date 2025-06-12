@@ -8,15 +8,13 @@
  */
 
 
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
-
-#if NET5_0_OR_GREATER
-using System;
-using AlastairLundy.DotExtensions.IO.Unix;
-
 using System.Runtime.Versioning;
-#endif
+using System.Text;
+
+using AlastairLundy.DotExtensions.IO.Unix;
 
 using WhatExecLib.Executables.Abstractions;
 
@@ -112,7 +110,43 @@ namespace WhatExecLib.Executables
 #endif
         private bool IsUnixElfFile(string filename)
         {
-            
+            try
+            {
+                if (File.Exists(filename) == false || OperatingSystem.IsLinux() == false
+                    && OperatingSystem.IsMacOS() == false && OperatingSystem.IsFreeBSD() == false)
+                {
+                    return false;
+                }
+
+                using (FileStream fs = new FileStream(Path.GetFullPath(filename), FileMode.Open, FileAccess.Read))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        char[] buffer;
+
+                        if (Environment.Is64BitOperatingSystem)
+                        {
+                           buffer = new char[64];
+                        }
+                        else
+                        {
+                            buffer = new char[52];
+                        }
+
+                        sr.Read(buffer, 0, buffer.Length);
+
+                        string readData = Encoding.Default.
+                    }
+                }
+                
+                //TODO: Finish working on Unix Elf file detection.
+                
+                
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -130,7 +164,20 @@ namespace WhatExecLib.Executables
 #endif
         private bool IsMachOFile(string filename)
         {
-            
+            try
+            {
+                if (File.Exists(filename) == false || OperatingSystem.IsLinux() == false
+                    && OperatingSystem.IsMacOS() == false && OperatingSystem.IsFreeBSD() == false)
+                {
+                    return false;
+                }
+                
+                //TODO: Implement Mach-O file detection
+            }
+            catch
+            {
+                return false;
+            }
         }
     
         /// <summary>
@@ -145,7 +192,7 @@ namespace WhatExecLib.Executables
         [SupportedOSPlatform("linux")]
         [SupportedOSPlatform("freebsd")]
         [UnsupportedOSPlatform("ios")]
-        [UnsupportedOSPlatform("android")]
+        [SupportedOSPlatform("android")]
         [UnsupportedOSPlatform("browser")]
 #endif
         public bool DoesFileHaveExecutablePermissions(string filename)
@@ -161,7 +208,13 @@ namespace WhatExecLib.Executables
             {
                 
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+                     RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                     #if NET5_0_OR_GREATER
+                     || OperatingSystem.IsFreeBSD()
+                     || OperatingSystem.IsAndroid()
+                     #endif
+                     )
             {
 #if NET5_0_OR_GREATER
 #pragma warning disable CA1416
