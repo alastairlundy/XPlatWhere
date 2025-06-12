@@ -179,6 +179,14 @@ namespace WhatExecLib.Executables
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="executableName"></param>
+        /// <param name="directoryPath"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="DirectoryNotFoundException"></exception>
         public async Task<bool> IsExecutableInDirectoryAsync(string executableName, string directoryPath,
             CancellationToken cancellationToken = default)
         {
