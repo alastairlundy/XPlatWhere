@@ -9,11 +9,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
+using WhatExecLib.Abstractions.Executables;
+using WhatExecLib.Abstractions.Prioritizers;
+
 using WhatExecLib.Executables;
-using WhatExecLib.Executables.Abstractions;
 
 using WhatExecLib.Prioritizers;
-using WhatExecLib.Prioritizers.Abstractions;
 
 namespace WhatExecLib.Extensions.DependencyInjection;
 

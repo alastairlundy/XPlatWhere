@@ -11,221 +11,133 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
-using System.Text;
 
 using AlastairLundy.DotExtensions.IO.Unix;
 
-using WhatExecLib.Executables.Abstractions;
+#if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 
-namespace WhatExecLib.Executables
+using AlastairLundy.Resyslib.IO.Core.Extensions;
+using WhatExecLib.Abstractions.Executables;
+
+namespace WhatExecLib.Executables;
+
+/// <summary>
+/// 
+/// </summary>
+public class ExecutableFileDetector : IExecutableFileDetector
 {
+    
     /// <summary>
     /// 
     /// </summary>
-    public class ExecutableFileDetector : IExecutableFileDetector
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
+#if NET5_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
+    [UnsupportedOSPlatform("ios")]
+    [UnsupportedOSPlatform("android")]
+    [UnsupportedOSPlatform("browser")]
+#endif
+    public bool IsFileExecutable(string filename)
     {
-    
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        /// <exception cref="FileNotFoundException"></exception>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-        [UnsupportedOSPlatform("ios")]
-        [UnsupportedOSPlatform("android")]
-        [UnsupportedOSPlatform("browser")]
-#endif
-        public bool IsFileExecutable(string filename)
+        string fullPath = Path.GetFullPath(filename);
+       
+        if (File.Exists(fullPath) == false)
         {
-            string fullPath = Path.GetFullPath(filename);
+            throw new FileNotFoundException();
+        }
        
-            if (File.Exists(fullPath) == false)
-            {
-                throw new FileNotFoundException();
-            }
-       
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return Path.GetExtension(fullPath) == ".exe" ||
-                       fullPath == Path.GetExtension(".appx") ||
-                       fullPath == Path.GetExtension(".msi") ||
-                       fullPath == Path.GetExtension(".jar") ||
-                       fullPath == Path.GetExtension(".bat");
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return filename.IsExecutableExtension();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
 #pragma warning disable CA1416
-                return DoesFileHaveExecutablePermissions(fullPath) ||
-                       IsUnixElfFile(fullPath) || 
-                       fullPath == Path.GetExtension(".appimage") ||
-                       fullPath == Path.GetExtension(".deb") ||
-                       fullPath == Path.GetExtension(".rpm");
+            return DoesFileHaveExecutablePermissions(fullPath) ||
+                   //   IsUnixElfFile(fullPath) || 
+                   fullPath == Path.GetExtension(".appimage") ||
+                   fullPath == Path.GetExtension(".deb") ||
+                   fullPath == Path.GetExtension(".rpm");
 #pragma warning restore CA1416
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
 #pragma warning disable CA1416
+            return DoesFileHaveExecutablePermissions(fullPath) ||
+                   //     IsUnixElfFile(fullPath) || 
+                   //    IsMachOFile(fullPath) ||
+                   Path.GetExtension(fullPath) == ".pkg" ||
+                   Path.GetExtension(fullPath) == ".app";
+#pragma warning restore CA1416
+        }
+#if NET5_0_OR_GREATER
+        else
+        {
+            if (OperatingSystem.IsFreeBSD())
+            {
                 return DoesFileHaveExecutablePermissions(fullPath) ||
-                       IsUnixElfFile(fullPath) || 
-                       IsMachOFile(fullPath) ||
+                       // IsUnixElfFile(fullPath) || 
+                       // IsMachOFile(fullPath) ||
                        Path.GetExtension(fullPath) == ".pkg" ||
-                       Path.GetExtension(fullPath) == ".app";
-#pragma warning restore CA1416
-            }
-#if NET5_0_OR_GREATER
-            else
-            {
-                if (OperatingSystem.IsFreeBSD())
-                {
-                    return DoesFileHaveExecutablePermissions(fullPath) ||
-                           IsUnixElfFile(fullPath) || 
-                           IsMachOFile(fullPath) ||
-                           Path.GetExtension(fullPath) == ".pkg" ||
-                           Path.GetExtension(fullPath) == ".appimage";
-                }
-            }
-#endif
-
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [UnsupportedOSPlatform("windows")]
-        [SupportedOSPlatform("linux")]
-        [SupportedOSPlatform("freebsd")]
-        [SupportedOSPlatform("macos")]
-        [UnsupportedOSPlatform("ios")]
-        [UnsupportedOSPlatform("android")]
-        [UnsupportedOSPlatform("browser")]
-#endif
-        private bool IsUnixElfFile(string filename)
-        {
-            try
-            {
-                if (File.Exists(filename) == false || OperatingSystem.IsLinux() == false
-                    && OperatingSystem.IsMacOS() == false && OperatingSystem.IsFreeBSD() == false)
-                {
-                    return false;
-                }
-
-                using (FileStream fs = new FileStream(Path.GetFullPath(filename), FileMode.Open, FileAccess.Read))
-                {
-                    using (StreamReader sr = new StreamReader(fs))
-                    {
-                        char[] buffer;
-
-                        if (Environment.Is64BitOperatingSystem)
-                        {
-                           buffer = new char[64];
-                        }
-                        else
-                        {
-                            buffer = new char[52];
-                        }
-
-                        sr.Read(buffer, 0, buffer.Length);
-
-                        string readData = Encoding.Default.
-                    }
-                }
-                
-                //TODO: Finish working on Unix Elf file detection.
-                
-                
-            }
-            catch
-            {
-                return false;
+                       Path.GetExtension(fullPath) == ".appimage";
             }
         }
+#endif
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("macos")]
-        [UnsupportedOSPlatform("windows")]
-        [UnsupportedOSPlatform("linux")]
-        [UnsupportedOSPlatform("ios")]
-        [UnsupportedOSPlatform("android")]
-        [UnsupportedOSPlatform("browser")]
-#endif
-        private bool IsMachOFile(string filename)
-        {
-            try
-            {
-                if (File.Exists(filename) == false || OperatingSystem.IsLinux() == false
-                    && OperatingSystem.IsMacOS() == false && OperatingSystem.IsFreeBSD() == false)
-                {
-                    return false;
-                }
-                
-                //TODO: Implement Mach-O file detection
-            }
-            catch
-            {
-                return false;
-            }
-        }
-    
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        /// <exception cref="FileNotFoundException"></exception>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-        [SupportedOSPlatform("freebsd")]
-        [UnsupportedOSPlatform("ios")]
-        [SupportedOSPlatform("android")]
-        [UnsupportedOSPlatform("browser")]
-#endif
-        public bool DoesFileHaveExecutablePermissions(string filename)
-        {
-            string fullPath = Path.GetFullPath(filename);
-       
-            if (File.Exists(fullPath) == false)
-            {
-                throw new FileNotFoundException();
-            }
+        return false;
+    }
         
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
+#if NET5_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
+    [SupportedOSPlatform("freebsd")]
+    [UnsupportedOSPlatform("ios")]
+    [SupportedOSPlatform("android")]
+    [UnsupportedOSPlatform("browser")]
+#endif
+    public bool DoesFileHaveExecutablePermissions(string filename)
+    {
+        string fullPath = Path.GetFullPath(filename);
+       
+        if (File.Exists(fullPath) == false)
+        {
+            throw new FileNotFoundException();
+        }
+        
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
                 
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-                     RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
-                     #if NET5_0_OR_GREATER
-                     || OperatingSystem.IsFreeBSD()
-                     || OperatingSystem.IsAndroid()
-                     #endif
-                     )
-            {
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+#if NET5_0_OR_GREATER
+                 || OperatingSystem.IsFreeBSD()
+                 || OperatingSystem.IsAndroid()
+#endif
+                )
+        {
 #if NET5_0_OR_GREATER
 #pragma warning disable CA1416
-                return File.GetUnixFileMode(fullPath).IsExecutePermission();
+            return File.GetUnixFileMode(fullPath).IsExecutePermission();
 #pragma warning restore CA1416
 #else
                 
 #endif
-            }
-
-            return false;
         }
+
+        return false;
     }
 }

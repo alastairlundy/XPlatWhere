@@ -7,13 +7,11 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-namespace WhatExecLib.Prioritizers
-{
-    public enum DirectoryPriority
-    {
-        SystemDirectories,
-        UserDirectories,
-        SpecifiedDirectory
-    }
-}
+namespace WhatExecLib.Abstractions.Prioritizers;
 
+public enum DirectoryPriority
+{
+    SystemDirectories,
+    UserDirectories,
+    SpecifiedDirectory
+}

@@ -13,43 +13,43 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using WhatExecLib.Executables.Abstractions;
-using WhatExecLib.Files.Abstractions;
+using WhatExecLib.Abstractions.Executables;
+using WhatExecLib.Abstractions.Files;
+
 #if NET5_0_OR_GREATER
 #endif
 
-namespace WhatExecLib.Executables
+namespace WhatExecLib.Executables;
+
+public class MultiExecutableLocator : IMultiExecutableLocator
 {
+    private readonly IMultiFileLocator _multiFileLocator;
+    private readonly IExecutableFileDetector _executableFileDetector;
 
-    public class MultiExecutableLocator : IMultiExecutableLocator
+    public MultiExecutableLocator(IMultiFileLocator multiFileLocator,
+        IExecutableFileDetector executableFileDetector)
     {
-        private readonly IMultiFileLocator _multiFileLocator;
-        private readonly IExecutableFileDetector _executableFileDetector;
-
-        public MultiExecutableLocator(IMultiFileLocator multiFileLocator,
-            IExecutableFileDetector executableFileDetector)
-        {
-            _multiFileLocator = multiFileLocator;
-            _executableFileDetector = executableFileDetector;
-        }
+        _multiFileLocator = multiFileLocator;
+        _executableFileDetector = executableFileDetector;
+    }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-        /// <exception cref="DirectoryNotFoundException"></exception>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="folder"></param>
+    /// <returns></returns>
+    /// <exception cref="DirectoryNotFoundException"></exception>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
-        {
-            IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDirectoryAsync(folder);
+    public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
+    {
+        IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDirectoryAsync(folder);
 
-            return files.Where(file => _executableFileDetector.IsFileExecutable(file));
-        }
+        return files.Where(file => _executableFileDetector.IsFileExecutable(file));
+    }
 
     
 #if NET5_0_OR_GREATER
@@ -57,11 +57,10 @@ namespace WhatExecLib.Executables
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public async Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
-        {
-            IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);
+    public async Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
+    {
+        IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);
 
-            return files.Where(file => _executableFileDetector.IsFileExecutable(file));
-        }
+        return files.Where(file => _executableFileDetector.IsFileExecutable(file));
     }
 }

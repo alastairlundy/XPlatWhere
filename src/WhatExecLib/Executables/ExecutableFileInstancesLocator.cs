@@ -13,77 +13,77 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using WhatExecLib.Executables.Abstractions;
+using WhatExecLib.Abstractions.Executables;
 
-namespace WhatExecLib.Executables
+namespace WhatExecLib.Executables;
+
+/// <summary>
+/// 
+/// </summary>
+public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 {
+    private readonly IExecutableFileDetector _executableFileDetector;
+    private readonly IExecutableFileLocator _executableFileLocator;
+        
+    public ExecutableFileInstancesLocator(IExecutableFileDetector executableDetector,
+        IExecutableFileLocator executableFileLocator)
+    {
+        _executableFileDetector = executableDetector;
+        _executableFileLocator = executableFileLocator;
+    }
+
     /// <summary>
     /// 
     /// </summary>
-    public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
-    {
-        private readonly IExecutableFileDetector _executableFileDetector;
-        private readonly IExecutableFileLocator _executableFileLocator;
-        
-        public ExecutableFileInstancesLocator(IExecutableFileDetector executableDetector,
-            IExecutableFileLocator executableFileLocator)
-        {
-            _executableFileDetector = executableDetector;
-            _executableFileLocator = executableFileLocator;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="executableName"></param>
-        /// <returns></returns>
+    /// <param name="executableName"></param>
+    /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-        public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
-        {
-            DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
+    public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
+    {
+        DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
 
-            #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
                 IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
-            #else
-                IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard2XFallback(executableName, drives);
-            #endif
+#else
+        IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard2XFallback(executableName, drives);
+#endif
 
-            return output;
-        }
+        return output;
+    }
 
-        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard2XFallback(
-            string executableName, DriveInfo[] drives)
+    private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard2XFallback(
+        string executableName, DriveInfo[] drives)
+    {
+        ConcurrentBag<string> output = new ConcurrentBag<string>();
+            
+        Task<IEnumerable<string>>[] tasks = new Task<IEnumerable<string>>[drives.Length];
+
+        for (int i = 0; i < tasks.Length; i++)
         {
-            ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-            Task<IEnumerable<string>>[] tasks = new Task<IEnumerable<string>>[drives.Length];
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                tasks[i] = LocateExecutableInstancesWithinDriveAsync(drives[i], executableName);
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                tasks[i].Start();
-            }
-            
-            await Task.WhenAll(tasks);
-
-            foreach (Task<IEnumerable<string>> task in tasks)
-            {
-                foreach (string s in task.Result)
-                {
-                    output.Add(s);
-                }
-            }
-
-            return output;
+            tasks[i] = LocateExecutableInstancesWithinDriveAsync(drives[i], executableName);
         }
+
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            tasks[i].Start();
+        }
+            
+        await Task.WhenAll(tasks);
+
+        foreach (Task<IEnumerable<string>> task in tasks)
+        {
+            foreach (string s in task.Result)
+            {
+                output.Add(s);
+            }
+        }
+
+        return output;
+    }
 
 #if NET5_0_OR_GREATER
         private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_Net50_OrNewer(string executableName, DriveInfo[] drives)
@@ -116,53 +116,52 @@ namespace WhatExecLib.Executables
         }
 #endif
 
-        public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
+    public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
+    {
+        ConcurrentBag<string> output = new ConcurrentBag<string>();
+            
+        DirectoryInfo rootDir = driveInfo.RootDirectory;
+
+        Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
         {
-            ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-            DirectoryInfo rootDir = driveInfo.RootDirectory;
+            IEnumerable<string> executables = await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
 
-                Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
-                {
-                    IEnumerable<string> executables = await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
-
-                    foreach (string executable in executables)
-                    {
-                        output.Add(executable);
-                    }
-                });
-            
-            return output;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="executableName"></param>
-        /// <returns></returns>
-        public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
-        {
-            List<string> output = new List<string>();
-            
-            DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
-            
-            foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
+            foreach (string executable in executables)
             {
-                IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
-                    .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
-                    .Select(x => x.FullName);
+                output.Add(executable);
+            }
+        });
+            
+        return output;
+    }
 
-                foreach (string executable in executables)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="directoryPath"></param>
+    /// <param name="executableName"></param>
+    /// <returns></returns>
+    public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
+    {
+        List<string> output = new List<string>();
+            
+        DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
+            
+        foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
+        {
+            IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
+                .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
+                .Select(x => x.FullName);
+
+            foreach (string executable in executables)
+            {
+                if (executable.Equals(executableName))
                 {
-                    if (executable.Equals(executableName))
-                    {
-                        output.Add(executable);
-                    }
+                    output.Add(executable);
                 }
             }
-
-            return Task.FromResult<IEnumerable<string>>(output);
         }
+
+        return Task.FromResult<IEnumerable<string>>(output);
     }
 }
