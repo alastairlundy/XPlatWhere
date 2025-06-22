@@ -49,7 +49,8 @@ public class ExecutableFileLocator : IExecutableFileLocator
     {
         string file = await _fileLocator.LocateFileAsync(executableName, cancellationToken);
 
-        if (_executableFileDetector.IsFileExecutable(file) && _executableFileDetector.DoesFileHaveExecutablePermissions(file))
+        if (_executableFileDetector.IsFileExecutable(file) && 
+            _executableFileDetector.DoesFileHaveExecutablePermissions(file))
         {
             return file;
         }
