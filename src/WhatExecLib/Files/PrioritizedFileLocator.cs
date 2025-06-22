@@ -14,10 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WhatExecLib.Abstractions.Executables;
 using WhatExecLib.Abstractions.Files;
 using WhatExecLib.Abstractions.Prioritizers;
-using WhatExecLib.Executables;
 
 using WhatExecLib.Prioritizers;
 
@@ -28,7 +26,6 @@ namespace WhatExecLib.Files;
 /// </summary>
 public class PrioritizedFileLocator : IPrioritizedFileLocator
 {
-    private readonly IExecutableFileDetector _executableFileDetector;
     private readonly IDirectoryListPrioritizer _directoryListPrioritizer;
     
     /// <summary>
@@ -44,11 +41,9 @@ public class PrioritizedFileLocator : IPrioritizedFileLocator
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="executableFileDetector"></param>
     /// <param name="directoryListPrioritizer"></param>
-    public PrioritizedFileLocator(IExecutableFileDetector executableFileDetector, IDirectoryListPrioritizer directoryListPrioritizer)
+    public PrioritizedFileLocator(IDirectoryListPrioritizer directoryListPrioritizer)
     {
-        _executableFileDetector = executableFileDetector;
         _directoryListPrioritizer = directoryListPrioritizer;
         DirectoryPriority = DirectoryPriority.SystemDirectories;
         PrioritizedDirectories = [];

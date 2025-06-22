@@ -10,24 +10,25 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-using WhatExecLib.Abstractions.Executables;
 using WhatExecLib.Abstractions.Files;
+
 #if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
 #endif
 
 namespace WhatExecLib.Files;
 
 public class MultiFileLocator : IMultiFileLocator
 {
-    private readonly IExecutableFileDetector _executableFileDetector;
 
-    public MultiFileLocator(IExecutableFileDetector executableFileDetector)
+    /// <summary>
+    /// 
+    /// </summary>
+    public MultiFileLocator()
     {
-        _executableFileDetector = executableFileDetector;
+        
     }
         
     /// <summary>
@@ -58,20 +59,22 @@ public class MultiFileLocator : IMultiFileLocator
         
             foreach (string directory in directories)
             {
-                IEnumerable<string> files = Directory.GetFiles(directory)
-                    .Where(file => _executableFileDetector.IsFileExecutable(file));
+                IEnumerable<string> files = Directory.GetFiles(directory);
 
                 foreach (string file in files)
                 {
                     output.Add(file);
                 }
             }
-
         });
         return output;
     }
 
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
