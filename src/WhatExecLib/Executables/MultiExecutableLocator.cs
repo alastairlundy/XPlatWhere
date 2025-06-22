@@ -11,12 +11,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using WhatExecLib.Abstractions.Executables;
 using WhatExecLib.Abstractions.Files;
 
 #if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
 #endif
 
 namespace WhatExecLib.Executables;

@@ -86,9 +86,10 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
 #endif
     public IList<string> PrioritizeDirectory(string priorityDirectory, IEnumerable<string> directories)
     {
-        List<string> output = new();
-        
-        output.Add(priorityDirectory);
+        List<string> output =
+        [
+            priorityDirectory
+        ];
 
         foreach (string directory in directories)
         {
@@ -101,6 +102,11 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
         return output;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="directories"></param>
+    /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
@@ -150,7 +156,11 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
         return output;
     }
 
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="directories"></param>
+    /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
