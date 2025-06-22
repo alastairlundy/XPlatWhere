@@ -14,20 +14,18 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WhatExecLib.Abstractions.Executables;
+using WhatExecLib.Abstractions.Files;
 using WhatExecLib.Abstractions.Prioritizers;
 
-using WhatExecLib.Executables;
 using WhatExecLib.Prioritizers;
 
-namespace WhatExecLib.Executables;
+namespace WhatExecLib.Files;
 
 /// <summary>
 /// 
 /// </summary>
-public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocator
+public class PrioritizedFileLocator : IPrioritizedFileLocator
 {
-    private readonly IExecutableFileDetector _executableFileDetector;
     private readonly IDirectoryListPrioritizer _directoryListPrioritizer;
     
     /// <summary>
@@ -43,11 +41,9 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="executableFileDetector"></param>
     /// <param name="directoryListPrioritizer"></param>
-    public PrioritizedExecutableFileLocator(IExecutableFileDetector executableFileDetector, IDirectoryListPrioritizer directoryListPrioritizer)
+    public PrioritizedFileLocator(IDirectoryListPrioritizer directoryListPrioritizer)
     {
-        _executableFileDetector = executableFileDetector;
         _directoryListPrioritizer = directoryListPrioritizer;
         DirectoryPriority = DirectoryPriority.SystemDirectories;
         PrioritizedDirectories = [];
@@ -56,68 +52,68 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="executableName"></param>
+    /// <param name="fileName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default)
+    public async Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default)
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
             
 #if NET5_0_OR_GREATER
-        string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);            
+            string output = await LocateFileAsync_Net50_OrNewer(fileName, cancellationToken, drives);            
 #else
-            string output = await LocateExecutableAsync_NetStandard2XFallback(executableName, cancellationToken, drives);
+        string output = await LocateFileAsync_NetStandard2XFallback(fileName, cancellationToken, drives);
 #endif
         return output;
     }
 
 #if NET5_0_OR_GREATER
-    private async Task<string> LocateExecutableAsync_Net50_OrNewer(string executableName,
-        CancellationToken cancellationToken, DriveInfo[] drives)
-    {
-        ConcurrentBag<string> strings = new ConcurrentBag<string>();
-            
-        await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
+        private async Task<string> LocateFileAsync_Net50_OrNewer(string fileName,
+            CancellationToken cancellationToken, DriveInfo[] drives)
         {
-            bool result = await IsExecutableWithinDriveAsync(executableName, drive.Name, token);
-
-            if (result)
+            ConcurrentBag<string> strings = new ConcurrentBag<string>();
+            
+            await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
             {
-                DirectoryInfo rootDir = drive.RootDirectory;
-                        
-                foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                {
-                    bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName, token);
+                bool result = await IsFileWithinDriveAsync(fileName, drive.Name, token);
 
-                    if (foundExecutable)
+                if (result)
+                {
+                    DirectoryInfo rootDir = drive.RootDirectory;
+                        
+                    foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
                     {
-                        foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
+                        bool foundExecutable = await IsFileInDirectoryAsync(fileName, subDir.FullName, token);
+
+                        if (foundExecutable)
                         {
-                            if (file.Name.Equals(executableName))
+                            foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
                             {
-                                strings.Add(file.FullName);
-                                return;
+                                if (file.Name.Equals(fileName))
+                                {
+                                    strings.Add(file.FullName);
+                                    return;
+                                }
                             }
                         }
                     }
+                        
+                        
                 }
-                        
-                        
-            }
-        });
+            });
 
-        if (strings.Count > 0)
-        {
-            return strings.First();
+            if (strings.Count > 0)
+            {
+                return strings.First();
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
-        else
-        {
-            return string.Empty;
-        }
-    }
 #endif
 
-    private async Task<string> LocateExecutableAsync_NetStandard2XFallback(string executableName,
+    private async Task<string> LocateFileAsync_NetStandard2XFallback(string fileName,
         CancellationToken cancellationToken, DriveInfo[] drives)
     {
         ConcurrentBag<string> strings = new ConcurrentBag<string>();
@@ -128,7 +124,7 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
         {
             tasks[i] = new Task(async void () =>
             {
-                bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
+                bool result = await IsFileWithinDriveAsync(fileName, drives[i].Name, cancellationToken);
 
                 if (result)
                 {
@@ -142,13 +138,13 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
                         
                     foreach (string directory in prioritizedDirectories)
                     {
-                        bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, directory, cancellationToken);
+                        bool foundExecutable = await IsFileInDirectoryAsync(fileName, directory, cancellationToken);
 
                         if (foundExecutable)
                         {
                             foreach (string file in Directory.GetFiles(directory,"*", SearchOption.AllDirectories))
                             {
-                                if (file.Equals(executableName))
+                                if (file.Equals(fileName))
                                 {
                                     strings.Add(file);
                                     return;
@@ -181,12 +177,12 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="executableName"></param>
+    /// <param name="fileName"></param>
     /// <param name="directoryPath"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    public async Task<bool> IsExecutableInDirectoryAsync(string executableName, string directoryPath,
+    public async Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
         CancellationToken cancellationToken = default)
     {
         directoryPath = Path.GetFullPath(directoryPath);
@@ -199,17 +195,26 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
         return await Task.Run(() =>
         {
             string[] subDirectories = Directory.GetDirectories(directoryPath, "*", SearchOption.AllDirectories);
+
+            IEnumerable<string> prioritizedSubDirectories;
                 
-            IEnumerable<string> prioritizedSubDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, subDirectories,
-                PrioritizedDirectories.First());
+            if (PrioritizedDirectories.Count > 1)
+            {
+                prioritizedSubDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, subDirectories,
+                    PrioritizedDirectories.First()); 
+            }
+            else
+            {
+                prioritizedSubDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, subDirectories,
+                    PrioritizedDirectories.First());
+            }
+                 
                 
             foreach (string subDirectory in prioritizedSubDirectories)
             {
-                IEnumerable<string> files = Directory.GetFiles(subDirectory)
-                    .Where(file => _executableFileDetector.IsFileExecutable(file) &&
-                                   _executableFileDetector.DoesFileHaveExecutablePermissions(file));
+                IEnumerable<string> files = Directory.GetFiles(subDirectory);
 
-                string? file = files.FirstOrDefault(x => x.Equals(executableName));
+                string? file = files.FirstOrDefault(x => x.Equals(fileName));
 
                 if (file is not null)
                 {
@@ -222,8 +227,14 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     }
 
         
-        
-    public async Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="driveName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<bool> IsFileWithinDriveAsync(string fileName, string driveName, CancellationToken cancellationToken = default)
     {
         DriveInfo driveInfo = new DriveInfo(driveName);
             
@@ -231,15 +242,13 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
 
         return await Task.Run<bool>(async() =>
         {
-            string[] directories = rootDir.GetDirectories("*", SearchOption.AllDirectories).Select(x => x.FullName)
-                .ToArray();
+            string[] directories = rootDir.GetDirectories("*", SearchOption.AllDirectories).Select(x => x.FullName).ToArray();
                 
-            IEnumerable<string> prioritizedDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, directories,
-                directories.First());
+            IEnumerable<string> prioritizedDirectories = _directoryListPrioritizer.Prioritize(DirectoryPriority, directories, PrioritizedDirectories.First());
                 
             foreach (string directory in prioritizedDirectories)
             {
-                bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, directory, cancellationToken);
+                bool foundExecutable = await IsFileInDirectoryAsync(fileName, directory, cancellationToken);
 
                 if (foundExecutable)
                 {

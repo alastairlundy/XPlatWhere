@@ -15,14 +15,18 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
+
     <ItemGroup>
-      <PackageReference Include="AlastairLundy.DotExtensions" Version="7.1.1" Condition="'$(TargetFramework)' == 'net8.0' or '(TargetFramework)' == 'net9.0'"/>
+        <PackageReference Include="PolyFill" Version="8.0.1"
+                          Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'"
+        PrivateAssets="All"/>
     </ItemGroup>
-
-
     <ItemGroup>
-        <PackageReference Include="PolyFill" Version="7.33.0" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
-
+        <PackageReference Include="AlastairLundy.Resyslib.IO.Core" Version="3.2.0" />
+        <PackageReference Include="AlastairLundy.DotExtensions" Version="7.2.1" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\WhatExecLib.Abstractions\WhatExecLib.Abstractions.csproj" />
     </ItemGroup>
     
 </Project>

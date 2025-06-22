@@ -8,214 +8,54 @@
  */
 
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WhatExecLib.Executables.Abstractions;
+using WhatExecLib.Abstractions.Executables;
+using WhatExecLib.Abstractions.Files;
+
 #if NET5_0_OR_GREATER
 #endif
 
-namespace WhatExecLib.Executables
+namespace WhatExecLib.Executables;
+
+/// <summary>
+/// A class to help find an executable when you don't know where it is.
+/// </summary>
+public class ExecutableFileLocator : IExecutableFileLocator
 {
+    private readonly IFileLocator _fileLocator;
+    private readonly IExecutableFileDetector _executableFileDetector;
+
     /// <summary>
-    /// A class to help find an executable when you don't know where it is.
+    /// 
     /// </summary>
-    public class ExecutableFileLocator : IExecutableFileLocator
+    /// <param name="fileLocator"></param>
+    /// <param name="executableFileDetector"></param>
+    public ExecutableFileLocator(IFileLocator fileLocator, IExecutableFileDetector executableFileDetector)
     {
-        private readonly IExecutableFileDetector _executableFileDetector;
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="executableFileDetector"></param>
-        public ExecutableFileLocator(IExecutableFileDetector executableFileDetector)
+        _executableFileDetector = executableFileDetector;
+        _fileLocator = fileLocator;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="executableName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default)
+    {
+        string file = await _fileLocator.LocateFileAsync(executableName, cancellationToken);
+
+        if (_executableFileDetector.IsFileExecutable(file) && _executableFileDetector.DoesFileHaveExecutablePermissions(file))
         {
-            _executableFileDetector = executableFileDetector;
+            return file;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="executableName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default)
+        else
         {
-            DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
-            
-            // Parallel.ForEachAsync isn't supported by .NET Standard 2.1 or earlier, so this is only run on .NET 5+
-#if NET5_0_OR_GREATER
-            string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);
-#else
-            string output = await LocateExecutableAsync_NetStandard2XFallback(executableName, cancellationToken, drives);
-#endif
-
-            return output;
-        }
-
-        private async Task<string> LocateExecutableAsync_NetStandard2XFallback(string executableName,
-            CancellationToken cancellationToken, DriveInfo[] drives)
-        {
-            ConcurrentBag<string> strings = new ConcurrentBag<string>();
-            
-            Task[] tasks = new Task[drives.Length];
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                tasks[i] = new Task(async void () =>
-                {
-                    bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
-
-                    if (result)
-                    {
-                        DirectoryInfo rootDir = drives[i].RootDirectory;
-                        
-                        foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                        {
-                            bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName, cancellationToken);
-
-                            if (foundExecutable)
-                            {
-                                foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
-                                {
-                                    if (file.Name.Equals(executableName))
-                                    {
-                                        strings.Add(file.FullName);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                tasks[i].Start();
-            }
-
-            await Task.WhenAll(tasks);
-
-            if (strings.Count > 0)
-            {
-                return strings.First();
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-#if NET5_0_OR_GREATER
-        private async Task<string> LocateExecutableAsync_Net50_OrNewer(string executableName, CancellationToken cancellationToken,
-            DriveInfo[] drives)
-        {
-            string output = string.Empty;
-            await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
-            {
-                bool result = await IsExecutableWithinDriveAsync(executableName, drive.Name, token);
-
-                if (result)
-                {
-                    DirectoryInfo rootDir = drive.RootDirectory;
-                        
-                    foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                    {
-                        bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName, token);
-
-                        if (foundExecutable)
-                        {
-                            foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
-                            {
-                                if (file.Name.Equals(executableName))
-                                {
-                                    output = file.FullName;
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            if (string.IsNullOrEmpty(output) == false)
-            {
-                return output;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-#endif
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="executableName"></param>
-        /// <param name="directoryPath"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        public async Task<bool> IsExecutableInDirectoryAsync(string executableName, string directoryPath, CancellationToken cancellationToken = default)
-        {
-            directoryPath = Path.GetFullPath(directoryPath);
-        
-            if (Directory.Exists(directoryPath) == false)
-            {
-                throw new DirectoryNotFoundException(directoryPath);
-            }
-            
-            string[] directories = Directory.GetDirectories(directoryPath, "*", SearchOption.AllDirectories);
-
-            return await Task.Run(() =>
-            {
-                foreach (string directory in directories)
-                {
-                    IEnumerable<string> files = Directory.GetFiles(directory)
-                        .Where(file => _executableFileDetector.IsFileExecutable(file) &&
-                                       _executableFileDetector.DoesFileHaveExecutablePermissions(file));
-
-                    string? file = files.FirstOrDefault(x => x.Equals(executableName));
-
-                    if (file is not null)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }, cancellationToken);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="executableName"></param>
-        /// <param name="driveName"></param>
-        /// <returns></returns>
-        public async Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
-        {
-            DriveInfo driveInfo = new DriveInfo(driveName);
-            
-            DirectoryInfo rootDir = driveInfo.RootDirectory;
-
-            return await Task.Run(async() =>
-            {
-                foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                {
-                    bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, subDir.FullName);
-
-                    if (foundExecutable)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }, cancellationToken);
+            return string.Empty;
         }
     }
 }

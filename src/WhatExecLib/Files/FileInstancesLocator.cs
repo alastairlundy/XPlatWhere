@@ -13,50 +13,46 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using WhatExecLib.Abstractions.Executables;
+using WhatExecLib.Abstractions.Files;
 
-namespace WhatExecLib.Executables;
+namespace WhatExecLib.Files;
 
 /// <summary>
 /// 
 /// </summary>
-public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
+public class FileInstancesLocator : IFileInstancesLocator
 {
-    private readonly IExecutableFileDetector _executableFileDetector;
-    private readonly IExecutableFileLocator _executableFileLocator;
         
-    public ExecutableFileInstancesLocator(IExecutableFileDetector executableDetector,
-        IExecutableFileLocator executableFileLocator)
+    public FileInstancesLocator()
     {
-        _executableFileDetector = executableDetector;
-        _executableFileLocator = executableFileLocator;
+           
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="executableName"></param>
+    /// <param name="fileName"></param>
     /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
 #endif
-    public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
+    public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
 
 #if NET5_0_OR_GREATER
-                IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
+                IEnumerable<string> output = await LocateFileInstancesAsync_Net50_OrNewer(fileName, drives);
 #else
-        IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard2XFallback(executableName, drives);
+        IEnumerable<string> output = await LocateFileInstancesAsync_NetStandard2XFallback(fileName, drives);
 #endif
 
         return output;
     }
 
-    private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard2XFallback(
-        string executableName, DriveInfo[] drives)
+    private async Task<IEnumerable<string>> LocateFileInstancesAsync_NetStandard2XFallback(
+        string fileName, DriveInfo[] drives)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
             
@@ -64,7 +60,7 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 
         for (int i = 0; i < tasks.Length; i++)
         {
-            tasks[i] = LocateExecutableInstancesWithinDriveAsync(drives[i], executableName);
+            tasks[i] = LocateFileInstancesWithinDriveAsync(drives[i], fileName);
         }
 
         for (int i = 0; i < tasks.Length; i++)
@@ -86,21 +82,21 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     }
 
 #if NET5_0_OR_GREATER
-        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_Net50_OrNewer(string executableName, DriveInfo[] drives)
+        private async Task<IEnumerable<string>> LocateFileInstancesAsync_Net50_OrNewer(string fileName, DriveInfo[] drives)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();
             
             await Parallel.ForEachAsync(drives, async (drive, token) =>
             {
-                IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
+                IEnumerable<string> filesWithinDrive = await LocateFileInstancesWithinDriveAsync(drive, fileName);
 
-                IList<string> executablesDriveList = executablesWithinDrive.ToList();
+                IList<string> filesList = filesWithinDrive.ToList();
                 
-                if (executablesDriveList.Count > 0)
+                if (filesList.Count > 0)
                 {
-                    foreach (string executable in executablesDriveList)
+                    foreach (string file in filesList)
                     {
-                        output.Add(executable);
+                        output.Add(file);
                     }
                 }
             });
@@ -116,7 +112,7 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
         }
 #endif
 
-    public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
+    public async Task<IEnumerable<string>> LocateFileInstancesWithinDriveAsync(DriveInfo driveInfo, string fileName)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
             
@@ -124,7 +120,7 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 
         Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
         {
-            IEnumerable<string> executables = await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
+            IEnumerable<string> executables = await LocateFileInstancesWithinDirectory(subDir.FullName, fileName);
 
             foreach (string executable in executables)
             {
@@ -139,9 +135,9 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     /// 
     /// </summary>
     /// <param name="directoryPath"></param>
-    /// <param name="executableName"></param>
+    /// <param name="fileName"></param>
     /// <returns></returns>
-    public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
+    public Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
     {
         List<string> output = new List<string>();
             
@@ -149,13 +145,12 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
             
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
-            IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
-                .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
-                .Select(x => x.FullName);
+            FileInfo[] files = subDir.GetFiles("*", SearchOption.AllDirectories);
+            IEnumerable<string> executables = files.Select(x => x.FullName);
 
             foreach (string executable in executables)
             {
-                if (executable.Equals(executableName))
+                if (executable.Equals(fileName))
                 {
                     output.Add(executable);
                 }
