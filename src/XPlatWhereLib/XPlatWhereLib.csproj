@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+        <LangVersion>13</LangVersion>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>WhatExecLib</Title>
+        <Authors>AlastairLundy</Authors>
+        <Copyright>Copyright (c) 2025 Alastair Lundy</Copyright>
+        <RepositoryUrl>https://github.com/alastairlundy/whatexec</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="PolyFill" Version="8.0.1"
+                          Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'"
+        PrivateAssets="All"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AlastairLundy.Resyslib.IO.Core" Version="3.2.0" />
+        <PackageReference Include="AlastairLundy.DotExtensions" Version="7.2.1" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj" />
+    </ItemGroup>
+    
+</Project>
