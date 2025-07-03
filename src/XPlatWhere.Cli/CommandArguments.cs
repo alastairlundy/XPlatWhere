@@ -18,6 +18,14 @@ internal class CommandArguments
     [ArgDefaultValue(false)]
     public bool DisplayFileSizeAndLastModifiedForFiles { get; set; }
     
+    [ArgShortcut("/e")]
+    [ArgDefaultValue(false)]
+    public bool LookForExecutablesOnly { get; set; }
+    
+    [ArgShortcut("/n")]
+    [ArgDefaultValue(int.MaxValue)]
+    public int NumberOfFilesToLookFor { get; set; }
+    
     [HelpHook]
     [ArgShortcut("/?")]
     [ArgDefaultValue(false)]

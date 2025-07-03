@@ -20,7 +20,7 @@ namespace WhatExecLib.Extensions.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddWhatExecLib(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
+    public static IServiceCollection AddXPlatWhere(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
         switch (lifetime)
         {
