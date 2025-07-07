@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AlastairLundy.DotExtensions" Version="7.3.0" />
+      <PackageReference Include="AlastairLundy.DotExtensions" Version="7.4.1" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
       <PackageReference Include="PowerArgs" Version="4.0.3" />
     </ItemGroup>

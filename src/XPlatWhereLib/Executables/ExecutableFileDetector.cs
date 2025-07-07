@@ -12,13 +12,16 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
+#if NET8_0_OR_GREATER
 using AlastairLundy.DotExtensions.IO.Unix;
+#endif
+
+using AlastairLundy.Resyslib.IO.Core.Extensions;
 
 #if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
 
-using AlastairLundy.Resyslib.IO.Core.Extensions;
 using XPlatWhereLib.Abstractions.Executables;
 
 namespace XPlatWhereLib.Executables;
@@ -113,13 +116,11 @@ public class ExecutableFileDetector : IExecutableFileDetector
         string fullPath = Path.GetFullPath(filename);
        
         if (File.Exists(fullPath) == false)
-        {
             throw new FileNotFoundException();
-        }
         
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-                
+            
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
                  RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
@@ -131,10 +132,10 @@ public class ExecutableFileDetector : IExecutableFileDetector
         {
 #if NET5_0_OR_GREATER
 #pragma warning disable CA1416
-            return File.GetUnixFileMode(fullPath).IsExecutePermission();
+            return File.GetUnixFileMode(fullPath).HasExecutePermission();
 #pragma warning restore CA1416
 #else
-                
+            
 #endif
         }
 
