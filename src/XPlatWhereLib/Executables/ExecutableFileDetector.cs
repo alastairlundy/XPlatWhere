@@ -12,10 +12,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-#if NET8_0_OR_GREATER
-using AlastairLundy.DotExtensions.IO.Unix;
-#endif
-
 using AlastairLundy.Resyslib.IO.Core.Extensions;
 
 #if NET5_0_OR_GREATER
@@ -132,11 +128,15 @@ public class ExecutableFileDetector : IExecutableFileDetector
         {
 #if NET5_0_OR_GREATER
 #pragma warning disable CA1416
-            return File.GetUnixFileMode(fullPath).HasExecutePermission();
+            UnixFileMode fileMode = File.GetUnixFileMode(fullPath);
 #pragma warning restore CA1416
 #else
-            
+            UnixFileMode fileMode = FilePolyfill.GetUnixFileMode(fullPath);
 #endif
+            
+            return fileMode.HasFlag(UnixFileMode.OtherExecute) ||
+                   fileMode.HasFlag(UnixFileMode.GroupExecute) ||
+                   fileMode.HasFlag(UnixFileMode.UserExecute);
         }
 
         return false;
