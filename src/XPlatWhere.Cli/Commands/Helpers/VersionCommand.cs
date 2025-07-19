@@ -8,7 +8,7 @@ namespace XPlatWhere.Cli.Commands.Helpers;
  
 public class VersionCommand : ICliCommand
 {
-    public Task<int> RunAsync()
+    public Task<int> RunAsync(CommandArguments commandArguments)
     {
         Version? version = Assembly.GetExecutingAssembly().GetName().Version;
 

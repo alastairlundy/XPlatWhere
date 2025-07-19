@@ -4,5 +4,5 @@ namespace XPlatWhere.Cli;
 
 public interface ICliCommand
 {
-    Task<int> RunAsync();
+    Task<int> RunAsync(CommandArguments commandArguments);
 }
