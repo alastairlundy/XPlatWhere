@@ -13,10 +13,9 @@ using XPlatWhereLib.Abstractions.Executables;
 using XPlatWhereLib.Abstractions.Prioritizers;
 
 using XPlatWhereLib.Executables;
-
 using XPlatWhereLib.Prioritizers;
 
-namespace WhatExecLib.Extensions.DependencyInjection;
+namespace XPlatWhereLib.Extensions.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {

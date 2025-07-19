@@ -46,7 +46,8 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     /// </summary>
     /// <param name="executableFileDetector"></param>
     /// <param name="directoryListPrioritizer"></param>
-    public PrioritizedExecutableFileLocator(IExecutableFileDetector executableFileDetector, IDirectoryListPrioritizer directoryListPrioritizer)
+    public PrioritizedExecutableFileLocator(IExecutableFileDetector executableFileDetector,
+        IDirectoryListPrioritizer directoryListPrioritizer)
     {
         _executableFileDetector = executableFileDetector;
         _directoryListPrioritizer = directoryListPrioritizer;
@@ -223,7 +224,13 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     }
 
         
-        
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="executableName"></param>
+    /// <param name="driveName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<bool> IsExecutableWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
     {
         DriveInfo driveInfo = new DriveInfo(driveName);

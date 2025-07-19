@@ -7,7 +7,6 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +21,9 @@ using System.Runtime.Versioning;
 
 namespace XPlatWhereLib.Executables;
 
+/// <summary>
+/// 
+/// </summary>
 public class MultiExecutableLocator : IMultiExecutableLocator
 {
     private readonly IMultiFileLocator _multiFileLocator;
@@ -52,7 +54,11 @@ public class MultiExecutableLocator : IMultiExecutableLocator
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));
     }
 
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <returns></returns>
 #if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
