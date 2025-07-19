@@ -9,9 +9,21 @@
 
 namespace XPlatWhereLib.Abstractions.Prioritizers;
 
+/// <summary>
+/// 
+/// </summary>
 public enum DirectoryPriority
 {
+    /// <summary>
+    /// 
+    /// </summary>
     SystemDirectories,
+    /// <summary>
+    /// 
+    /// </summary>
     UserDirectories,
+    /// <summary>
+    /// 
+    /// </summary>
     SpecifiedDirectory
 }

@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace XPlatWhereLib.Abstractions.Executables;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IMultiExecutableLocator
 {
     /// <summary>
@@ -23,5 +26,10 @@ public interface IMultiExecutableLocator
     /// <exception cref="DirectoryNotFoundException"></exception>
     Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <returns></returns>
     Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo);
 }

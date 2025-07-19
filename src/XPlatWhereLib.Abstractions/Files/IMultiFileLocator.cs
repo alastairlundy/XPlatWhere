@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace XPlatWhereLib.Abstractions.Files;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IMultiFileLocator
 {
     /// <summary>
@@ -23,5 +26,10 @@ public interface IMultiFileLocator
     /// <exception cref="DirectoryNotFoundException"></exception>
     Task<IEnumerable<string>> LocateAllFilesWithinDirectoryAsync(string folder);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <returns></returns>
     Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo);
 }

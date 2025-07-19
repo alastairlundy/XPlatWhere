@@ -12,12 +12,33 @@ using XPlatWhereLib.Abstractions.Prioritizers;
 
 namespace XPlatWhereLib.Abstractions.Files;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IPrioritizedFileLocator : IFileLocator
 {
+    /// <summary>
+    /// 
+    /// </summary>
     DirectoryPriority DirectoryPriority { get; }
         
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="directory"></param>
     void PrioritizeDirectory(string directory);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="directories"></param>
     void PrioritizeDirectories(IEnumerable<string> directories);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="priority"></param>
+    /// <param name="directories"></param>
     void PrioritizeDirectories(DirectoryPriority priority, IEnumerable<string> directories);
 
 }

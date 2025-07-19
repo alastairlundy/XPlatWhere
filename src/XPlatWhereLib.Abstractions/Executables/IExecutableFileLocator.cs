@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace XPlatWhereLib.Abstractions.Executables;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IExecutableFileLocator
 {
     /// <summary>
