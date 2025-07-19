@@ -2,7 +2,7 @@ using PowerArgs;
 
 namespace XPlatWhere.Cli;
 
-internal class CommandArguments
+public class CommandArguments
 {
     [ArgShortcut("/r")]
     public string? PriorityDirectory { get; set; }
