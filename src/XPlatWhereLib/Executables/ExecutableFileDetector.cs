@@ -34,14 +34,12 @@ public class ExecutableFileDetector : IExecutableFileDetector
     /// <param name="filename"></param>
     /// <returns></returns>
     /// <exception cref="FileNotFoundException"></exception>
-#if NET5_0_OR_GREATER
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
     [UnsupportedOSPlatform("ios")]
     [UnsupportedOSPlatform("android")]
     [UnsupportedOSPlatform("browser")]
-#endif
     public bool IsFileExecutable(string filename)
     {
         string fullPath = Path.GetFullPath(filename);
@@ -75,7 +73,6 @@ public class ExecutableFileDetector : IExecutableFileDetector
                    Path.GetExtension(fullPath) == ".app";
 #pragma warning restore CA1416
         }
-#if NET5_0_OR_GREATER
         else
         {
             if (OperatingSystem.IsFreeBSD())
@@ -87,7 +84,6 @@ public class ExecutableFileDetector : IExecutableFileDetector
                        Path.GetExtension(fullPath) == ".appimage";
             }
         }
-#endif
 
         return false;
     }
@@ -120,19 +116,12 @@ public class ExecutableFileDetector : IExecutableFileDetector
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
                  RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
-#if NET5_0_OR_GREATER
                  || OperatingSystem.IsFreeBSD()
-                 || OperatingSystem.IsAndroid()
-#endif
-                )
+                 || OperatingSystem.IsAndroid())
         {
-#if NET5_0_OR_GREATER
 #pragma warning disable CA1416
             UnixFileMode fileMode = File.GetUnixFileMode(fullPath);
 #pragma warning restore CA1416
-#else
-            UnixFileMode fileMode = FilePolyfill.GetUnixFileMode(fullPath);
-#endif
             
             return fileMode.HasFlag(UnixFileMode.OtherExecute) ||
                    fileMode.HasFlag(UnixFileMode.GroupExecute) ||

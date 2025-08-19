@@ -46,46 +46,11 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
 
-#if NET5_0_OR_GREATER
                 IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
-#else
-        IEnumerable<string> output = await LocateExecutableInstancesAsync_NetStandard2XFallback(executableName, drives);
-#endif
 
         return output;
     }
 
-    private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_NetStandard2XFallback(
-        string executableName, DriveInfo[] drives)
-    {
-        ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-        Task<IEnumerable<string>>[] tasks = new Task<IEnumerable<string>>[drives.Length];
-
-        for (int i = 0; i < tasks.Length; i++)
-        {
-            tasks[i] = LocateExecutableInstancesWithinDriveAsync(drives[i], executableName);
-        }
-
-        for (int i = 0; i < tasks.Length; i++)
-        {
-            tasks[i].Start();
-        }
-            
-        await Task.WhenAll(tasks);
-
-        foreach (Task<IEnumerable<string>> task in tasks)
-        {
-            foreach (string s in task.Result)
-            {
-                output.Add(s);
-            }
-        }
-
-        return output;
-    }
-
-#if NET5_0_OR_GREATER
         private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_Net50_OrNewer(string executableName, DriveInfo[] drives)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();
@@ -114,7 +79,6 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
                 return output;
             }
         }
-#endif
 
     public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
     {

@@ -65,15 +65,11 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
             
-#if NET5_0_OR_GREATER
         string output = await LocateExecutableAsync_Net50_OrNewer(executableName, cancellationToken, drives);            
-#else
-            string output = await LocateExecutableAsync_NetStandard2XFallback(executableName, cancellationToken, drives);
-#endif
+
         return output;
     }
 
-#if NET5_0_OR_GREATER
     private async Task<string> LocateExecutableAsync_Net50_OrNewer(string executableName,
         CancellationToken cancellationToken, DriveInfo[] drives)
     {
@@ -117,69 +113,7 @@ public class PrioritizedExecutableFileLocator : IPrioritizedExecutableFileLocato
             return string.Empty;
         }
     }
-#endif
-
-    private async Task<string> LocateExecutableAsync_NetStandard2XFallback(string executableName,
-        CancellationToken cancellationToken, DriveInfo[] drives)
-    {
-        ConcurrentBag<string> strings = new ConcurrentBag<string>();
-
-        Task[] tasks = new Task[drives.Length];
-
-        for (int i = 0; i < drives.Length; i++)
-        {
-            tasks[i] = new Task(async void () =>
-            {
-                bool result = await IsExecutableWithinDriveAsync(executableName, drives[i].Name, cancellationToken);
-
-                if (result)
-                {
-                    DirectoryInfo rootDir = drives[i].RootDirectory;
-
-                    IEnumerable<string> directories = rootDir.GetDirectories("*", SearchOption.AllDirectories)
-                        .Select(x => x.FullName);
-
-                    IEnumerable<string> prioritizedDirectories =
-                        _directoryListPrioritizer.Prioritize(DirectoryPriority, directories);
-                        
-                    foreach (string directory in prioritizedDirectories)
-                    {
-                        bool foundExecutable = await IsExecutableInDirectoryAsync(executableName, directory, cancellationToken);
-
-                        if (foundExecutable)
-                        {
-                            foreach (string file in Directory.GetFiles(directory,"*", SearchOption.AllDirectories))
-                            {
-                                if (file.Equals(executableName))
-                                {
-                                    strings.Add(file);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        for (int i = 0; i < drives.Length; i++)
-        {
-            tasks[i].Start();
-        }
-
-        await Task.WhenAll(tasks);
-
-        if (strings.Count > 0)
-        {
-            return strings.First();
-        }
-        else
-        {
-            return string.Empty;
-        }
-    }
-
-
+    
     /// <summary>
     /// 
     /// </summary>

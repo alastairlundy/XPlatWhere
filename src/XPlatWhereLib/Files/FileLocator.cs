@@ -31,16 +31,11 @@ public class FileLocator : IFileLocator
         DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
             
         // Parallel.ForEachAsync isn't supported by .NET Standard 2.1 or earlier, so this is only run on .NET 5+
-#if NET5_0_OR_GREATER
         string output = await LocateFileAsync_Net50_OrNewer(fileName, cancellationToken, drives);
-#else
-            string output = await LocateFileAsync_NetStandard2X_Fallback(fileName, cancellationToken, drives);
-#endif
 
         return output;
     }
         
-#if NET5_0_OR_GREATER
     private async Task<string> LocateFileAsync_Net50_OrNewer(string fileName,
         CancellationToken cancellationToken, DriveInfo[] drives)
     {
@@ -72,62 +67,6 @@ public class FileLocator : IFileLocator
                 }
             }
         });
-
-        if (output.Count > 0)
-        {
-            return output.First(x => string.IsNullOrEmpty(x) == false);
-        }
-        else
-        {
-            return string.Empty;
-        }
-    }
-#endif
-
-    private async Task<string> LocateFileAsync_NetStandard2X_Fallback(string fileName,
-        CancellationToken cancellationToken, DriveInfo[] drives)
-    {
-        ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-        Task[] tasks = new Task[drives.Length];
-
-        for (int i = 0; i < tasks.Length; i++)
-        {
-            tasks[i] = new Task(async void () =>
-            {
-                bool result = await IsFileWithinDriveAsync(fileName, drives[i].Name, cancellationToken);
-
-                if (result)
-                {
-                    DirectoryInfo rootDir = drives[i].RootDirectory;
-                        
-                    foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-                    {
-                        bool foundExecutable = await IsFileInDirectoryAsync(fileName,
-                            subDir.FullName, cancellationToken);
-
-                        if (foundExecutable)
-                        {
-                            foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
-                            {
-                                if (file.Name.Equals(fileName))
-                                {
-                                    output.Add(file.FullName);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        for (int i = 0; i < tasks.Length; i++)
-        {
-            tasks[i].Start();
-        }
-
-        await Task.WhenAll(tasks);
 
         if (output.Count > 0)
         {

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using AlastairLundy.DotExtensions.IO;
+
 using AlastairLundy.DotPrimitives.Collections.CachedEnumerables;
 
 using XPlatWhereLib.Abstractions.Executables;

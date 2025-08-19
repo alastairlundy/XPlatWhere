@@ -41,12 +41,8 @@ public class FileInstancesLocator : IFileInstancesLocator
     public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
-
-#if NET5_0_OR_GREATER
-                IEnumerable<string> output = await LocateFileInstancesAsync_Net50_OrNewer(fileName, drives);
-#else
-        IEnumerable<string> output = await LocateFileInstancesAsync_NetStandard2XFallback(fileName, drives);
-#endif
+        
+        IEnumerable<string> output = await LocateFileInstancesAsync_Net50_OrNewer(fileName, drives);
 
         return output;
     }
@@ -81,7 +77,6 @@ public class FileInstancesLocator : IFileInstancesLocator
         return output;
     }
 
-#if NET5_0_OR_GREATER
         private async Task<IEnumerable<string>> LocateFileInstancesAsync_Net50_OrNewer(string fileName, DriveInfo[] drives)
         {
             ConcurrentBag<string> output = new ConcurrentBag<string>();
@@ -110,7 +105,6 @@ public class FileInstancesLocator : IFileInstancesLocator
                 return output;
             }
         }
-#endif
 
     public async Task<IEnumerable<string>> LocateFileInstancesWithinDriveAsync(DriveInfo driveInfo, string fileName)
     {
