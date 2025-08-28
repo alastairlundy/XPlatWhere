@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using AlastairLundy.DotExtensions.IO;
 
-using AlastairLundy.DotPrimitives.Collections.CachedEnumerables;
+using AlastairLundy.DotPrimitives.Collections.Enumerables.Cached;
 
 using XPlatWhereLib.Abstractions.Executables;
 
