@@ -28,17 +28,8 @@ public class FileLocator : IFileLocator
     /// <returns></returns>
     public async Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default)
     {
-        DriveInfo[] drives = DriveInfo.GetDrives().Where(drive => drive.IsReady).ToArray();
+        IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(drive => drive.IsReady);
             
-        // Parallel.ForEachAsync isn't supported by .NET Standard 2.1 or earlier, so this is only run on .NET 5+
-        string output = await LocateFileAsync_Net50_OrNewer(fileName, cancellationToken, drives);
-
-        return output;
-    }
-        
-    private async Task<string> LocateFileAsync_Net50_OrNewer(string fileName,
-        CancellationToken cancellationToken, DriveInfo[] drives)
-    {
         ConcurrentBag<string> output = new();
 
         await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
@@ -77,7 +68,6 @@ public class FileLocator : IFileLocator
             return string.Empty;
         }
     }
-        
 
     /// <summary>
     /// 

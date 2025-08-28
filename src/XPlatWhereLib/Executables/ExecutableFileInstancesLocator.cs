@@ -7,11 +7,13 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using XPlatWhereLib.Abstractions.Executables;
 
@@ -44,57 +46,43 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 #endif
     public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
     {
-        DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
+        IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(x => x.IsReady);
 
-                IEnumerable<string> output = await LocateExecutableInstancesAsync_Net50_OrNewer(executableName, drives);
+        ConcurrentBag<string> output = new ConcurrentBag<string>();
+            
+        await Parallel.ForEachAsync(drives, async (drive, token) =>
+        {
+            IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
+
+            foreach (string executable in executablesWithinDrive)
+            {
+                output.Add(executable);
+            }
+        });
+
+        if (output.Count == 0)
+            return [];
 
         return output;
     }
-
-        private async Task<IEnumerable<string>> LocateExecutableInstancesAsync_Net50_OrNewer(string executableName, DriveInfo[] drives)
-        {
-            ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-            await Parallel.ForEachAsync(drives, async (drive, token) =>
-            {
-                IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
-
-                IList<string> executablesDriveList = executablesWithinDrive.ToList();
-                
-                if (executablesDriveList.Count > 0)
-                {
-                    foreach (string executable in executablesDriveList)
-                    {
-                        output.Add(executable);
-                    }
-                }
-            });
-
-            if (output.Count == 0)
-            {
-                return [];
-            }
-            else
-            {
-                return output;
-            }
-        }
 
     public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
             
         DirectoryInfo rootDir = driveInfo.RootDirectory;
-
-        Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
-        {
-            IEnumerable<string> executables = await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
-
-            foreach (string executable in executables)
+        
+        await Parallel.ForEachAsync(rootDir.GetDirectories("*", SearchOption.AllDirectories),
+            async (subDir, token) =>
             {
-                output.Add(executable);
-            }
-        });
+                IEnumerable<string> executables =
+                    await LocateExecutableInstancesWithinDirectory(subDir.FullName, executableName);
+
+                foreach (string executable in executables)
+                {
+                    output.Add(executable);
+                }
+            });
             
         return output;
     }

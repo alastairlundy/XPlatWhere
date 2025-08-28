@@ -39,75 +39,51 @@ public class FileInstancesLocator : IFileInstancesLocator
     public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
-        
+
         IEnumerable<string> output = await LocateFileInstancesAsync_Net50_OrNewer(fileName, drives);
 
         return output;
     }
 
-    private async Task<IEnumerable<string>> LocateFileInstancesAsync_NetStandard2XFallback(
-        string fileName, DriveInfo[] drives)
+    private async Task<IEnumerable<string>> LocateFileInstancesAsync_Net50_OrNewer(string fileName, DriveInfo[] drives)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-        Task<IEnumerable<string>>[] tasks = new Task<IEnumerable<string>>[drives.Length];
 
-        for (int i = 0; i < tasks.Length; i++)
+        await Parallel.ForEachAsync(drives, async (drive, token) =>
         {
-            tasks[i] = LocateFileInstancesWithinDriveAsync(drives[i], fileName);
-        }
+            IEnumerable<string> filesWithinDrive = await LocateFileInstancesWithinDriveAsync(drive, fileName);
 
-        for (int i = 0; i < tasks.Length; i++)
-        {
-            tasks[i].Start();
-        }
-            
-        await Task.WhenAll(tasks);
+            IList<string> filesList = filesWithinDrive.ToList();
 
-        foreach (Task<IEnumerable<string>> task in tasks)
-        {
-            foreach (string s in task.Result)
+            if (filesList.Count > 0)
             {
-                output.Add(s);
-            }
-        }
-
-        return output;
-    }
-
-        private async Task<IEnumerable<string>> LocateFileInstancesAsync_Net50_OrNewer(string fileName, DriveInfo[] drives)
-        {
-            ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
-            await Parallel.ForEachAsync(drives, async (drive, token) =>
-            {
-                IEnumerable<string> filesWithinDrive = await LocateFileInstancesWithinDriveAsync(drive, fileName);
-
-                IList<string> filesList = filesWithinDrive.ToList();
-                
-                if (filesList.Count > 0)
+                foreach (string file in filesList)
                 {
-                    foreach (string file in filesList)
-                    {
-                        output.Add(file);
-                    }
+                    output.Add(file);
                 }
-            });
+            }
+        });
 
-            if (output.Count == 0)
-            {
-                return [];
-            }
-            else
-            {
-                return output;
-            }
+        if (output.Count == 0)
+        {
+            return [];
         }
-
+        else
+        {
+            return output;
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<string>> LocateFileInstancesWithinDriveAsync(DriveInfo driveInfo, string fileName)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
+
         DirectoryInfo rootDir = driveInfo.RootDirectory;
 
         Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
@@ -119,7 +95,7 @@ public class FileInstancesLocator : IFileInstancesLocator
                 output.Add(executable);
             }
         });
-            
+
         return output;
     }
 
@@ -129,12 +105,12 @@ public class FileInstancesLocator : IFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
+    public async Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
     {
         List<string> output = new List<string>();
-            
+
         DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
-            
+
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
             FileInfo[] files = subDir.GetFiles("*", SearchOption.AllDirectories);
@@ -149,6 +125,6 @@ public class FileInstancesLocator : IFileInstancesLocator
             }
         }
 
-        return Task.FromResult<IEnumerable<string>>(output);
+        return output;
     }
 }
