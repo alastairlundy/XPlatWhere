@@ -42,11 +42,9 @@ public class MultiExecutableLocator : IMultiExecutableLocator
     /// <param name="folder"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-#if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
-#endif
     public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
     {
         IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDirectoryAsync(folder);
@@ -59,11 +57,9 @@ public class MultiExecutableLocator : IMultiExecutableLocator
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
         [SupportedOSPlatform("windows")]
         [SupportedOSPlatform("macos")]
         [SupportedOSPlatform("linux")]
-#endif
     public async Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
     {
         IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);

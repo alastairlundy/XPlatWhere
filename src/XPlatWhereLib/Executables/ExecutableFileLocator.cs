@@ -55,9 +55,7 @@ public class ExecutableFileLocator : IExecutableFileLocator
         {
             return file;
         }
-        else
-        {
-            return string.Empty;
-        }
+
+        return string.Empty;
     }
 }

@@ -14,9 +14,7 @@ using System.Threading.Tasks;
 
 using XPlatWhereLib.Abstractions.Files;
 
-#if NET5_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
 
 namespace XPlatWhereLib.Files;
 
@@ -37,11 +35,9 @@ public class MultiFileLocator : IMultiFileLocator
     /// <param name="folder"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public async Task<IEnumerable<string>> LocateAllFilesWithinDirectoryAsync(string folder)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
@@ -75,11 +71,9 @@ public class MultiFileLocator : IMultiFileLocator
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")] 
+    [SupportedOSPlatform("linux")]
     public async Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo)
     {
         ConcurrentBag<string> output = new();

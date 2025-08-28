@@ -22,10 +22,8 @@ namespace XPlatWhereLib.Files;
 /// </summary>
 public class FileInstancesLocator : IFileInstancesLocator
 {
-        
     public FileInstancesLocator()
     {
-           
     }
 
     /// <summary>
@@ -34,9 +32,9 @@ public class FileInstancesLocator : IFileInstancesLocator
     /// <param name="fileName"></param>
     /// <returns></returns>
 #if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
 #endif
     public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
