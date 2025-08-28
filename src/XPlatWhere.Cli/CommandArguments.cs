@@ -31,7 +31,7 @@ public class CommandArguments
     [ArgDefaultValue(false)]
     public bool HelpCommandRequested { get; set; }
     
-    [ArgRequired(PromptIfMissing=true)]
+    [ArgRequired(PromptIfMissing = true)]
     [ArgPosition(0)]
     public string SearchPattern { get; set; } = string.Empty;
 
