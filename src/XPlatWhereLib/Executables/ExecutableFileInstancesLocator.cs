@@ -51,7 +51,8 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 
         await Parallel.ForEachAsync(drives, async (drive, token) =>
         {
-            IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
+            IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(
+                    drive, executableName);
 
             foreach (string executable in executablesWithinDrive)
             {
@@ -62,7 +63,13 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
         return output.IsEmpty ? [] : output;
     }
 
-    public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
+    /// <summary>
+    /// </summary>
+    /// <param name="driveInfo"></param>
+    /// <param name="executableName"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo,
+        string executableName)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
 
@@ -88,10 +95,11 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, string executableName)
+    public Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath,
+        string executableName)
     {
-        List<string> output = new List<string>();
-            
+        ConcurrentBag<string> output = new ConcurrentBag<string>();
+
         DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
 
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))

@@ -63,9 +63,9 @@ public class FindExecutablesCommand : ICliCommand
             {
                 string actual = Path.GetFullPath(result.Replace('"'.ToString(), string.Empty));
 
-                var file = new FileInfo(actual);
+                FileInfo file = new FileInfo(actual);
 
-               string fileSize = file.GetFileSizeString();
+                string fileSize = file.GetFileSizeString();
                 DateTime lastModified = File.GetLastWriteTime(actual);
 
                 string output = $"{result} {fileSize} {lastModified.ToShortDateString()} {lastModified.ToShortTimeString()}";

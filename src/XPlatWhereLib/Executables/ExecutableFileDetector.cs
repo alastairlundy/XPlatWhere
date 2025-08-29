@@ -101,6 +101,7 @@ public class ExecutableFileDetector : IExecutableFileDetector
         
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
+            WindowsFilePermission filePermission;
             
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
