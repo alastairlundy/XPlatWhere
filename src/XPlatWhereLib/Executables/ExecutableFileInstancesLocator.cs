@@ -12,12 +12,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Threading;
 using System.Threading.Tasks;
+using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
-using XPlatWhereLib.Abstractions.Executables;
-
-namespace XPlatWhereLib.Executables;
+namespace AlastairLundy.XPlatWhereLib.Executables;
 
 /// <summary>
 /// 

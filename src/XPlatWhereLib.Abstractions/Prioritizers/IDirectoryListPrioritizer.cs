@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace XPlatWhereLib.Abstractions.Prioritizers;
+namespace AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
 
 public interface IDirectoryListPrioritizer
 {

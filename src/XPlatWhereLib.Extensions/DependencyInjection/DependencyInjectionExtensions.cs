@@ -7,11 +7,15 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
+using AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
+
+using AlastairLundy.XPlatWhereLib.Executables;
+using AlastairLundy.XPlatWhereLib.Files;
+using AlastairLundy.XPlatWhereLib.Prioritizers;
+
 using Microsoft.Extensions.DependencyInjection;
-using XPlatWhereLib.Abstractions.Executables;
-using XPlatWhereLib.Abstractions.Prioritizers;
-using XPlatWhereLib.Executables;
-using XPlatWhereLib.Prioritizers;
 
 namespace XPlatWhereLib.Extensions.DependencyInjection;
 
@@ -34,6 +38,9 @@ public static class DependencyInjectionExtensions
                 services.AddScoped<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddScoped<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddScoped<IMultiExecutableLocator, MultiExecutableLocator>();
+                services.AddScoped<IFileLocator, FileLocator>();
+                services.AddScoped<IMultiFileLocator, MultiFileLocator>();
+                services.AddScoped<IFileInstancesLocator, FileInstancesLocator>();
                 break;
             case ServiceLifetime.Singleton:
                 services.AddSingleton<IDirectoryListPrioritizer, DirectoryListPrioritizer>();
@@ -41,6 +48,9 @@ public static class DependencyInjectionExtensions
                 services.AddSingleton<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddSingleton<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddSingleton<IMultiExecutableLocator, MultiExecutableLocator>();
+                services.AddSingleton<IFileLocator, FileLocator>();
+                services.AddSingleton<IMultiFileLocator, MultiFileLocator>();
+                services.AddSingleton<IFileInstancesLocator, FileInstancesLocator>();
                 break;
             case ServiceLifetime.Transient:
                 services.AddTransient<IDirectoryListPrioritizer, DirectoryListPrioritizer>();
@@ -48,6 +58,9 @@ public static class DependencyInjectionExtensions
                 services.AddTransient<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddTransient<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddTransient<IMultiExecutableLocator, MultiExecutableLocator>();
+                services.AddTransient<IFileLocator, FileLocator>();
+                services.AddTransient<IMultiFileLocator, MultiFileLocator>();
+                services.AddTransient<IFileInstancesLocator, FileInstancesLocator>();
                 break;
         }
 

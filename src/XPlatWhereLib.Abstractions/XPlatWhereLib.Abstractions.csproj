@@ -13,6 +13,11 @@
         <RepositoryType>git</RepositoryType>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+        <AssemblyName>AlastairLundy.XPlatWhereLib.Abstractions</AssemblyName>
+        <RootNamespace>AlastairLundy.XPlatWhereLib.Abstractions</RootNamespace>
+        <PackageId>AlastairLundy.XPlatWhereLib.Abstractions</PackageId>
+        <Version>0.1.0</Version>
+        <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     </PropertyGroup>
 
 </Project>

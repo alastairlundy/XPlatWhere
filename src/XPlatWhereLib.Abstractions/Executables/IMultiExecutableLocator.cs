@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace XPlatWhereLib.Abstractions.Executables;
+namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
 /// <summary>
 /// </summary>

@@ -10,12 +10,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace XPlatWhereLib.Abstractions.Executables;
+namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
 /// <summary>
+/// 
 /// </summary>
 public interface IExecutableFileLocator
 {
+    
     /// <summary>
     /// </summary>
     /// <param name="executableName"></param>

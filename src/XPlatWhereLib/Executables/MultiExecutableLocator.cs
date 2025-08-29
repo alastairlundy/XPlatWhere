@@ -13,10 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using XPlatWhereLib.Abstractions.Executables;
-using XPlatWhereLib.Abstractions.Files;
+using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
-namespace XPlatWhereLib.Executables;
+namespace AlastairLundy.XPlatWhereLib.Executables;
 
 /// <summary>
 /// </summary>

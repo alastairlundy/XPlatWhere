@@ -10,7 +10,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace XPlatWhereLib.Abstractions.Files;
+namespace AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
 /// <summary>
 /// 

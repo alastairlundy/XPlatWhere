@@ -12,15 +12,12 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-
 using AlastairLundy.DotPrimitives.IO.Permissions;
 using AlastairLundy.DotPrimitives.IO.Permissions.Windows;
-
 using AlastairLundy.Resyslib.IO.Core.Extensions;
+using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
-using XPlatWhereLib.Abstractions.Executables;
-
-namespace XPlatWhereLib.Executables;
+namespace AlastairLundy.XPlatWhereLib.Executables;
 
 /// <summary>
 /// </summary>

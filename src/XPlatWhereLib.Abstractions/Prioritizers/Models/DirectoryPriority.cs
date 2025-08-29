@@ -7,7 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-namespace XPlatWhereLib.Abstractions.Prioritizers;
+namespace AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
 
 /// <summary>
 /// </summary>

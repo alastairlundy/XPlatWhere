@@ -13,9 +13,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using XPlatWhereLib.Abstractions.Files;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
-namespace XPlatWhereLib.Files;
+namespace AlastairLundy.XPlatWhereLib.Files;
 
 public class FileLocator : IFileLocator
 {

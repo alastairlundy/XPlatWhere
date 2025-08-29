@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using XPlatWhereLib.Abstractions.Files;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
-namespace XPlatWhereLib.Files;
+namespace AlastairLundy.XPlatWhereLib.Files;
 
 public class MultiFileLocator : IMultiFileLocator
 {

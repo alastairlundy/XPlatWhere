@@ -13,10 +13,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
-using XPlatWhereLib.Abstractions.Files;
-
-namespace XPlatWhereLib.Files;
+namespace AlastairLundy.XPlatWhereLib.Files;
 
 /// <summary>
 /// </summary>

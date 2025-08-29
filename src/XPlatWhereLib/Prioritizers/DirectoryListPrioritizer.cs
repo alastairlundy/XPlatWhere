@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using XPlatWhereLib.Abstractions.Prioritizers;
+using AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
 
-namespace XPlatWhereLib.Prioritizers;
+namespace AlastairLundy.XPlatWhereLib.Prioritizers;
 
 /// <summary>
 /// </summary>

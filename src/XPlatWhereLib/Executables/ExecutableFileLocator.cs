@@ -9,10 +9,10 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using XPlatWhereLib.Abstractions.Executables;
-using XPlatWhereLib.Abstractions.Files;
+using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
+using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
-namespace XPlatWhereLib.Executables;
+namespace AlastairLundy.XPlatWhereLib.Executables;
 
 /// <summary>
 ///     A class to help find an executable when you don't know where it is.
