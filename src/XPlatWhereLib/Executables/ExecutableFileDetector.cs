@@ -14,6 +14,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
 using AlastairLundy.DotPrimitives.IO.Permissions;
+using AlastairLundy.DotPrimitives.IO.Permissions.Windows;
+
 using AlastairLundy.Resyslib.IO.Core.Extensions;
 
 using XPlatWhereLib.Abstractions.Executables;
@@ -101,8 +103,9 @@ public class ExecutableFileDetector : IExecutableFileDetector
         
         if (OperatingSystem.IsWindows())
         {
-            WindowsFilePermission filePermission;
+            WindowsFilePermission filePermission = WindowsFilePermissionManager.GetFilePermission(fullPath);
             
+           return filePermission.HasExecutePermission();
         }
         else if (OperatingSystem.IsLinux() ||
                  OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()
