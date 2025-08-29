@@ -10,12 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj" />
-      <ProjectReference Include="..\XPlatWhereLib\XPlatWhereLib.csproj" />
+        <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj"/>
+        <ProjectReference Include="..\XPlatWhereLib\XPlatWhereLib.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
     </ItemGroup>
 
 </Project>
