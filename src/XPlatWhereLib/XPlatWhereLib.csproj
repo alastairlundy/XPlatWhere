@@ -15,14 +15,14 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <UnixFileModeAvailable>true</UnixFileModeAvailable>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="AlastairLundy.DotPrimitives" Version="2.0.0" />
+        <PackageReference Include="AlastairLundy.DotPrimitives" Version="3.1.0" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AlastairLundy.Resyslib.IO.Core" Version="3.2.0" />
+        <PackageReference Include="AlastairLundy.Resyslib.IO.Core" Version="3.2.0"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj" />
+        <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj"/>
     </ItemGroup>
 </Project>

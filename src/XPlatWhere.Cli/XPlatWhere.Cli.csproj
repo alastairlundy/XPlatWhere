@@ -13,30 +13,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AlastairLundy.DotExtensions" Version="8.2.0" />
-      <PackageReference Include="AlastairLundy.DotPrimitives.Collections" Version="3.1.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
-      <PackageReference Include="PowerArgs" Version="4.0.3" />
+        <PackageReference Include="AlastairLundy.DotExtensions" Version="8.2.0"/>
+        <PackageReference Include="AlastairLundy.DotPrimitives.Collections" Version="3.1.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8"/>
+        <PackageReference Include="PowerArgs" Version="4.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Localizations\Resources.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
+        <EmbeddedResource Update="Localizations\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Localizations\Resources.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>Resources.resx</DependentUpon>
-      </Compile>
+        <Compile Update="Localizations\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\XPlatWhereLib.Extensions\XPlatWhereLib.Extensions.csproj" />
-      <ProjectReference Include="..\XPlatWhereLib\XPlatWhereLib.csproj" />
+        <ProjectReference Include="..\XPlatWhereLib.Extensions\XPlatWhereLib.Extensions.csproj"/>
+        <ProjectReference Include="..\XPlatWhereLib\XPlatWhereLib.csproj"/>
     </ItemGroup>
 
 </Project>
