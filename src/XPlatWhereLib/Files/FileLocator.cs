@@ -37,7 +37,7 @@ public class FileLocator : IFileLocator
             if (result)
             {
                 DirectoryInfo rootDir = drive.RootDirectory;
-                        
+
                 foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
                     bool foundExecutable = await IsFileInDirectoryAsync(fileName, subDir.FullName, token);
@@ -57,14 +57,9 @@ public class FileLocator : IFileLocator
             }
         });
 
-        if (output.Count > 0)
-        {
-            return output.First(x => string.IsNullOrEmpty(x) == false);
-        }
-        else
-        {
-            return string.Empty;
-        }
+        if (output.Count > 0) return output.First(x => !string.IsNullOrEmpty(x));
+
+        return string.Empty;
     }
 
     /// <summary>
@@ -74,7 +69,8 @@ public class FileLocator : IFileLocator
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    public async Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath, CancellationToken cancellationToken = default)
+    public async Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
+        CancellationToken cancellationToken = default)
     {
         directoryPath = Path.GetFullPath(directoryPath);
         
@@ -109,7 +105,8 @@ public class FileLocator : IFileLocator
     /// <param name="driveName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> IsFileWithinDriveAsync(string executableName, string driveName, CancellationToken cancellationToken = default)
+    public async Task<bool> IsFileWithinDriveAsync(string executableName, string driveName,
+        CancellationToken cancellationToken = default)
     {
         DriveInfo driveInfo = new DriveInfo(driveName);
             

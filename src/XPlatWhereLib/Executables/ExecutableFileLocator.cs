@@ -19,12 +19,12 @@ using XPlatWhereLib.Abstractions.Files;
 namespace XPlatWhereLib.Executables;
 
 /// <summary>
-/// A class to help find an executable when you don't know where it is.
+///     A class to help find an executable when you don't know where it is.
 /// </summary>
 public class ExecutableFileLocator : IExecutableFileLocator
 {
-    private readonly IFileLocator _fileLocator;
     private readonly IExecutableFileDetector _executableFileDetector;
+    private readonly IFileLocator _fileLocator;
 
     /// <summary>
     /// 
@@ -43,16 +43,17 @@ public class ExecutableFileLocator : IExecutableFileLocator
     /// <param name="executableName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default)
+    public async Task<string> LocateExecutableAsync(string executableName,
+        CancellationToken cancellationToken = default)
     {
         string file = await _fileLocator.LocateFileAsync(executableName, cancellationToken);
 
-        if (_executableFileDetector.IsFileExecutable(file) && 
-            _executableFileDetector.DoesFileHaveExecutablePermissions(file))
+        if (_executableFileDetector.IsFileExecutable(file) == false ||
+            _executableFileDetector.DoesFileHaveExecutablePermissions(file) == false)
         {
-            return file;
+            return string.Empty;
         }
-
-        return string.Empty;
+        
+        return file;
     }
 }

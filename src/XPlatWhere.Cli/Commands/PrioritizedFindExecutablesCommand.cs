@@ -5,15 +5,14 @@ namespace XPlatWhere.Cli.Commands;
 
 public class PrioritizedFindExecutablesCommand : ICliCommand
 {
-    private readonly IPrioritizedExecutableFileLocator _prioritizedExecutableFileLocator;
+    private readonly IExecutableFileLocator _prioritizedExecutableFileLocator;
 
-    public PrioritizedFindExecutablesCommand(IPrioritizedExecutableFileLocator prioritizedExecutableFileLocator)
+    public PrioritizedFindExecutablesCommand(IExecutableFileLocator prioritizedExecutableFileLocator)
     {
         _prioritizedExecutableFileLocator = prioritizedExecutableFileLocator;
     }
-    
+
     public Task<int> RunAsync(CommandArguments commandArguments)
     {
-        
     }
 }

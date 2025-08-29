@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using AlastairLundy.DotExtensions.IO;
-
 using AlastairLundy.DotPrimitives.Collections.Enumerables.Cached;
 
 using XPlatWhereLib.Abstractions.Executables;
@@ -23,11 +22,11 @@ public class FindExecutablesCommand : ICliCommand
         _executableFileInstancesLocator = executableFileInstancesLocator;
         _executableFileLocator = executableFileLocator;
     }
-    
+
     public async Task<int> RunAsync(CommandArguments commandArguments)
     {
         IRefreshableCachedEnumerable<string> results;
-        
+
         if (commandArguments.NumberOfFilesToLookFor > 1)
         {
            IEnumerable<string> enumerable = await _executableFileInstancesLocator.LocateExecutableInstancesAsync(commandArguments.SearchPattern);

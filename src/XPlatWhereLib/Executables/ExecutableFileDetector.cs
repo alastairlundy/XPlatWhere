@@ -13,6 +13,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
+using AlastairLundy.DotPrimitives.IO.Permissions;
 using AlastairLundy.Resyslib.IO.Core.Extensions;
 
 using XPlatWhereLib.Abstractions.Executables;
@@ -57,7 +58,8 @@ public class ExecutableFileDetector : IExecutableFileDetector
                    fullPath == Path.GetExtension(".rpm");
 #pragma warning restore CA1416
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
 #pragma warning disable CA1416
             return DoesFileHaveExecutablePermissions(fullPath) ||
@@ -67,28 +69,22 @@ public class ExecutableFileDetector : IExecutableFileDetector
                    Path.GetExtension(fullPath) == ".app";
 #pragma warning restore CA1416
         }
-        else
-        {
-            if (OperatingSystem.IsFreeBSD())
-            {
-                return DoesFileHaveExecutablePermissions(fullPath) ||
-                       // IsUnixElfFile(fullPath) || 
-                       // IsMachOFile(fullPath) ||
-                       Path.GetExtension(fullPath) == ".pkg" ||
-                       Path.GetExtension(fullPath) == ".appimage";
-            }
-        }
+
+        if (OperatingSystem.IsFreeBSD())
+            return DoesFileHaveExecutablePermissions(fullPath) ||
+                   // IsUnixElfFile(fullPath) || 
+                   // IsMachOFile(fullPath) ||
+                   Path.GetExtension(fullPath) == ".pkg" ||
+                   Path.GetExtension(fullPath) == ".appimage";
 
         return false;
     }
-        
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
     /// <exception cref="FileNotFoundException"></exception>
-#if NET5_0_OR_GREATER
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
@@ -96,7 +92,6 @@ public class ExecutableFileDetector : IExecutableFileDetector
     [UnsupportedOSPlatform("ios")]
     [SupportedOSPlatform("android")]
     [UnsupportedOSPlatform("browser")]
-#endif
     public bool DoesFileHaveExecutablePermissions(string filename)
     {
         string fullPath = Path.GetFullPath(filename);
@@ -116,7 +111,7 @@ public class ExecutableFileDetector : IExecutableFileDetector
 #pragma warning disable CA1416
             UnixFileMode fileMode = File.GetUnixFileMode(fullPath);
 #pragma warning restore CA1416
-            
+
             return fileMode.HasFlag(UnixFileMode.OtherExecute) ||
                    fileMode.HasFlag(UnixFileMode.GroupExecute) ||
                    fileMode.HasFlag(UnixFileMode.UserExecute);

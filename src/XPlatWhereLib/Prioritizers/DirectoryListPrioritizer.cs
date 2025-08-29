@@ -32,9 +32,8 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
     {
         return Prioritize(priority, directories, null);
     }
-        
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="priority"></param>
     /// <param name="directories"></param>

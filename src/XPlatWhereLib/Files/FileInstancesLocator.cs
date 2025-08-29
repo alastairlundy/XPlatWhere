@@ -35,40 +35,21 @@ public class FileInstancesLocator : IFileInstancesLocator
     [SupportedOSPlatform("linux")]
     public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
-        DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
+        IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(x => x.IsReady);
 
-        IEnumerable<string> output = await LocateFileInstancesAsync_Net50_OrNewer(fileName, drives);
-
-        return output;
-    }
-
-    private async Task<IEnumerable<string>> LocateFileInstancesAsync_Net50_OrNewer(string fileName, DriveInfo[] drives)
-    {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
 
         await Parallel.ForEachAsync(drives, async (drive, token) =>
         {
             IEnumerable<string> filesWithinDrive = await LocateFileInstancesWithinDriveAsync(drive, fileName);
 
-            IList<string> filesList = filesWithinDrive.ToList();
-
-            if (filesList.Count > 0)
+            foreach (string file in filesWithinDrive)
             {
-                foreach (string file in filesList)
-                {
-                    output.Add(file);
-                }
+                output.Add(file);
             }
         });
 
-        if (output.Count == 0)
-        {
-            return [];
-        }
-        else
-        {
-            return output;
-        }
+        return output.Count == 0 ? [] : output;
     }
 
     /// <summary>
@@ -82,7 +63,8 @@ public class FileInstancesLocator : IFileInstancesLocator
 
         DirectoryInfo rootDir = driveInfo.RootDirectory;
 
-        Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
+        await Parallel.ForEachAsync(rootDir.GetDirectories("*", SearchOption.AllDirectories), 
+            async (subDir, token) =>
         {
             IEnumerable<string> executables = await LocateFileInstancesWithinDirectory(subDir.FullName, fileName);
 
@@ -101,7 +83,7 @@ public class FileInstancesLocator : IFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
+    public Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
     {
         List<string> output = new List<string>();
 
@@ -121,6 +103,6 @@ public class FileInstancesLocator : IFileInstancesLocator
             }
         }
 
-        return output;
+        return Task.FromResult<IEnumerable<string>>(output);
     }
 }

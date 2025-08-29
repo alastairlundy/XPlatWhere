@@ -17,12 +17,10 @@ public class VersionCommand : ICliCommand
             string output = $"{Resources.App_Name} v{version.ToHumanReadableString()} {Resources.Labels_Versions_RunningOn} ";
         
             Console.WriteLine(output);
-            
+
             return Task.FromResult(0);
         }
-        else
-        {
-            return Task.FromResult(-1);
-        }
+
+        return Task.FromResult(-1);
     }
 }

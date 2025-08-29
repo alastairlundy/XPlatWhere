@@ -25,31 +25,30 @@ namespace XPlatWhereLib.Executables;
 public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 {
     private readonly IExecutableFileDetector _executableFileDetector;
-    private readonly IExecutableFileLocator _executableFileLocator;
-        
-    public ExecutableFileInstancesLocator(IExecutableFileDetector executableDetector,
-        IExecutableFileLocator executableFileLocator)
-    {
-        _executableFileDetector = executableDetector;
-        _executableFileLocator = executableFileLocator;
-    }
 
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="executableDetector"></param>
+    public ExecutableFileInstancesLocator(IExecutableFileDetector executableDetector)
+    {
+        _executableFileDetector = executableDetector;
+    }
+
+    /// <summary>
+    /// </summary>
     /// <param name="executableName"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
     {
         IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(x => x.IsReady);
 
         ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
+
         await Parallel.ForEachAsync(drives, async (drive, token) =>
         {
             IEnumerable<string> executablesWithinDrive = await LocateExecutableInstancesWithinDriveAsync(drive, executableName);
@@ -60,18 +59,15 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
             }
         });
 
-        if (output.Count == 0)
-            return [];
-
-        return output;
+        return output.IsEmpty ? [] : output;
     }
 
     public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
-            
+
         DirectoryInfo rootDir = driveInfo.RootDirectory;
-        
+
         await Parallel.ForEachAsync(rootDir.GetDirectories("*", SearchOption.AllDirectories),
             async (subDir, token) =>
             {
@@ -83,12 +79,11 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
                     output.Add(executable);
                 }
             });
-            
+
         return output;
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="directoryPath"></param>
     /// <param name="executableName"></param>
@@ -98,7 +93,7 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
         List<string> output = new List<string>();
             
         DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
-            
+
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
             IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)

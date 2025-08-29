@@ -24,9 +24,8 @@ public class MultiFileLocator : IMultiFileLocator
     {
         
     }
-        
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="folder"></param>
     /// <returns></returns>
