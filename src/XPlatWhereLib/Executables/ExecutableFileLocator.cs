@@ -7,12 +7,8 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-using System.Collections.Concurrent;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using XPlatWhereLib.Abstractions.Executables;
 using XPlatWhereLib.Abstractions.Files;
 
@@ -27,7 +23,6 @@ public class ExecutableFileLocator : IExecutableFileLocator
     private readonly IFileLocator _fileLocator;
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileLocator"></param>
     /// <param name="executableFileDetector"></param>
@@ -38,7 +33,6 @@ public class ExecutableFileLocator : IExecutableFileLocator
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="executableName"></param>
     /// <param name="cancellationToken"></param>
