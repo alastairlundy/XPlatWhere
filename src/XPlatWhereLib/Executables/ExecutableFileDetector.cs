@@ -99,13 +99,13 @@ public class ExecutableFileDetector : IExecutableFileDetector
         if (File.Exists(fullPath) == false)
             throw new FileNotFoundException();
         
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (OperatingSystem.IsWindows())
         {
             WindowsFilePermission filePermission;
             
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+        else if (OperatingSystem.IsLinux() ||
+                 OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()
                  || OperatingSystem.IsFreeBSD()
                  || OperatingSystem.IsAndroid())
         {
