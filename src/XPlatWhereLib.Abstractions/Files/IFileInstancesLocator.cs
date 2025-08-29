@@ -14,32 +14,26 @@ using System.Threading.Tasks;
 namespace XPlatWhereLib.Abstractions.Files;
 
 /// <summary>
-/// 
 /// </summary>
 public interface IFileInstancesLocator
 {
-        
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>
     Task<IEnumerable<string>> LocateFileInstancesAsync(string executableName);
-        
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
     Task<IEnumerable<string>> LocateFileInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName);
-        
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="directoryPath"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
     Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string executableName);
-
 }

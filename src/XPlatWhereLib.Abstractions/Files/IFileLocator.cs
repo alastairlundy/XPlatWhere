@@ -18,7 +18,6 @@ namespace XPlatWhereLib.Abstractions.Files;
 public interface IFileLocator
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="cancellationToken"></param>
@@ -26,7 +25,6 @@ public interface IFileLocator
     Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="directoryPath"></param>
@@ -34,9 +32,8 @@ public interface IFileLocator
     /// <returns></returns>
     Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
         CancellationToken cancellationToken = default);
-    
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="driveName"></param>

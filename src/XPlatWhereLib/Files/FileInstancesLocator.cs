@@ -13,12 +13,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+
 using XPlatWhereLib.Abstractions.Files;
 
 namespace XPlatWhereLib.Files;
 
 /// <summary>
-/// 
 /// </summary>
 public class FileInstancesLocator : IFileInstancesLocator
 {
@@ -27,15 +27,12 @@ public class FileInstancesLocator : IFileInstancesLocator
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-#endif
     public async Task<IEnumerable<string>> LocateFileInstancesAsync(string fileName)
     {
         DriveInfo[] drives = DriveInfo.GetDrives().Where(x => x.IsReady).ToArray();
@@ -73,9 +70,8 @@ public class FileInstancesLocator : IFileInstancesLocator
             return output;
         }
     }
-    
+
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <param name="fileName"></param>

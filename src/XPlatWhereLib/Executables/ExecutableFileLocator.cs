@@ -16,9 +16,6 @@ using System.Threading.Tasks;
 using XPlatWhereLib.Abstractions.Executables;
 using XPlatWhereLib.Abstractions.Files;
 
-#if NET5_0_OR_GREATER
-#endif
-
 namespace XPlatWhereLib.Executables;
 
 /// <summary>

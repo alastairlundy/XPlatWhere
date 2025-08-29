@@ -11,25 +11,19 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 using AlastairLundy.Resyslib.IO.Core.Extensions;
-
-#if NET5_0_OR_GREATER
-using System.Runtime.Versioning;
-#endif
 
 using XPlatWhereLib.Abstractions.Executables;
 
 namespace XPlatWhereLib.Executables;
 
 /// <summary>
-/// 
 /// </summary>
 public class ExecutableFileDetector : IExecutableFileDetector
 {
-    
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>

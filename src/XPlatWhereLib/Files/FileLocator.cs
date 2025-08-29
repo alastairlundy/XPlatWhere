@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using XPlatWhereLib.Abstractions.Files;
 
 namespace XPlatWhereLib.Files;
@@ -21,7 +20,6 @@ namespace XPlatWhereLib.Files;
 public class FileLocator : IFileLocator
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="cancellationToken"></param>
@@ -29,7 +27,7 @@ public class FileLocator : IFileLocator
     public async Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default)
     {
         IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(drive => drive.IsReady);
-            
+
         ConcurrentBag<string> output = new();
 
         await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
@@ -70,7 +68,6 @@ public class FileLocator : IFileLocator
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="directoryPath"></param>
@@ -107,7 +104,6 @@ public class FileLocator : IFileLocator
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="executableName"></param>
     /// <param name="driveName"></param>

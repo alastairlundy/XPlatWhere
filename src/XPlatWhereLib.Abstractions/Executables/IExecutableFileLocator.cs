@@ -13,12 +13,10 @@ using System.Threading.Tasks;
 namespace XPlatWhereLib.Abstractions.Executables;
 
 /// <summary>
-/// 
 /// </summary>
 public interface IExecutableFileLocator
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="executableName"></param>
     /// <param name="cancellationToken"></param>

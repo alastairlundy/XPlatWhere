@@ -10,19 +10,15 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-
-using XPlatWhereLib.Abstractions.Files;
-
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
+using XPlatWhereLib.Abstractions.Files;
 
 namespace XPlatWhereLib.Files;
 
 public class MultiFileLocator : IMultiFileLocator
 {
-
     /// <summary>
-    /// 
     /// </summary>
     public MultiFileLocator()
     {
@@ -67,12 +63,11 @@ public class MultiFileLocator : IMultiFileLocator
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <returns></returns>
     [SupportedOSPlatform("windows")]
-    [SupportedOSPlatform("macos")] 
+    [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
     public async Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo)
     {

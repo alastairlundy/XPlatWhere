@@ -14,13 +14,10 @@ using System.Threading.Tasks;
 namespace XPlatWhereLib.Abstractions.Executables;
 
 /// <summary>
-/// 
 /// </summary>
 public interface IExecutableFileInstancesLocator
 {
-    
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>

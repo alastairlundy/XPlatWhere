@@ -12,28 +12,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-
 using XPlatWhereLib.Abstractions.Prioritizers;
 
 namespace XPlatWhereLib.Prioritizers;
 
 /// <summary>
-/// 
 /// </summary>
 public class DirectoryListPrioritizer : IDirectoryListPrioritizer
 {
-    
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="priority"></param>
     /// <param name="directories"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public IList<string> Prioritize(DirectoryPriority priority, IEnumerable<string> directories)
     {
         return Prioritize(priority, directories, null);
@@ -47,12 +41,11 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
     /// <param name="priorityDirectory"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
-    public IList<string> Prioritize(DirectoryPriority priority, IEnumerable<string> directories, string? priorityDirectory)
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
+    public IList<string> Prioritize(DirectoryPriority priority, IEnumerable<string> directories,
+        string? priorityDirectory)
     {
         switch (priority)
         {
@@ -80,11 +73,9 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
     /// <param name="priorityDirectory"></param>
     /// <param name="directories"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public IList<string> PrioritizeDirectory(string priorityDirectory, IEnumerable<string> directories)
     {
         List<string> output =
@@ -104,19 +95,16 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="directories"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public IList<string> PrioritizeUserApplicationDirectories(IEnumerable<string> directories)
     {
         List<string> output = new List<string>();
-        
+
         foreach (string directory in directories)
         {
             string fullPath = Path.GetFullPath(directory);
@@ -158,19 +146,16 @@ public class DirectoryListPrioritizer : IDirectoryListPrioritizer
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="directories"></param>
     /// <returns></returns>
-#if NET5_0_OR_GREATER
-        [SupportedOSPlatform("windows")]
-        [SupportedOSPlatform("macos")]
-        [SupportedOSPlatform("linux")]
-#endif
+    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("macos")]
+    [SupportedOSPlatform("linux")]
     public IList<string> PrioritizeSystemDirectories(IEnumerable<string> directories)
     {
         List<string> output = new List<string>();
-        
+
         foreach (string directory in directories)
         {
             string fullPath = Path.GetFullPath(directory);
