@@ -17,11 +17,9 @@ namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 /// </summary>
 public interface IExecutableFileLocator
 {
-    
     /// <summary>
     /// </summary>
     /// <param name="executableName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<string> LocateExecutableAsync(string executableName, CancellationToken cancellationToken = default);
+    Task<string?> LocateExecutableAsync(string executableName);
 }
