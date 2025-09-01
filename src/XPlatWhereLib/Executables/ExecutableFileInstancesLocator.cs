@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+
 using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
 namespace AlastairLundy.XPlatWhereLib.Executables;
@@ -36,7 +37,6 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     /// <summary>
     /// </summary>
     /// <param name="executableName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
@@ -100,20 +100,20 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 
         DirectoryInfo rootDir = new DirectoryInfo(Path.GetFullPath(directoryPath));
 
-        foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-        {
-            IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
-                .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
-                .Select(x => x.FullName);
-
-            foreach (string executable in executables)
+        Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), (subDir, token) =>
             {
-                if (executable.Equals(executableName))
+                IEnumerable<string> executables = subDir.GetFiles("*", SearchOption.AllDirectories)
+                    .Where(x => _executableFileDetector.IsFileExecutable(x.Name))
+                    .Select(x => x.FullName);
+
+                foreach (string executable in executables)
                 {
-                    output.Add(executable);
+                    if (executable.Equals(executableName))
+                    {
+                        output.Add(executable);
+                    }
                 }
-            }
-        }
+            });
 
         return Task.FromResult<IEnumerable<string>>(output);
     }

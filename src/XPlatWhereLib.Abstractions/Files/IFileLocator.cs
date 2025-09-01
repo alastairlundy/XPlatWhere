@@ -30,7 +30,7 @@ public interface IFileLocator
     /// <param name="directoryPath"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
+    Task<bool> IsFileInDirectory(string fileName, string directoryPath,
         CancellationToken cancellationToken = default);
 
     /// <summary>
