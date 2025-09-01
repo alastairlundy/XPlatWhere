@@ -40,7 +40,7 @@ public class FileLocator : IFileLocator
 
                 foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
-                    bool foundExecutable = await IsFileInDirectoryAsync(fileName, subDir.FullName, token);
+                    bool foundExecutable = await IsFileInDirectory(fileName, subDir.FullName, token);
 
                     if (foundExecutable)
                     {
@@ -69,7 +69,7 @@ public class FileLocator : IFileLocator
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    public async Task<bool> IsFileInDirectoryAsync(string fileName, string directoryPath,
+    public Task<bool> IsFileInDirectory(string fileName, string directoryPath,
         CancellationToken cancellationToken = default)
     {
         directoryPath = Path.GetFullPath(directoryPath);
@@ -81,22 +81,10 @@ public class FileLocator : IFileLocator
             
         string[] directories = Directory.GetDirectories(directoryPath, "*", SearchOption.AllDirectories);
 
-        return await Task.Run(() =>
-        {
-            foreach (string directory in directories)
-            {
-                IEnumerable<string> files = Directory.GetFiles(directory);
+       IEnumerable<string?> results = (from dir in directories
+            select Directory.GetFiles(dir).FirstOrDefault(x => x.Equals(fileName)));
 
-                string? file = files.FirstOrDefault(x => x.Equals(fileName));
-
-                if (file is not null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }, cancellationToken);
+       return Task.FromResult(results.Any(x => x is not null));
     }
 
     /// <summary>
