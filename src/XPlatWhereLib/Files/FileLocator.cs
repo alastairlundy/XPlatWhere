@@ -97,21 +97,19 @@ public class FileLocator : IFileLocator
         CancellationToken cancellationToken = default)
     {
         DriveInfo driveInfo = new DriveInfo(driveName);
-            
+
         DirectoryInfo rootDir = driveInfo.RootDirectory;
-
-        return await Task.Run(async() =>
+        
+        foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
-            foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
-            {
-                bool foundFile = await IsFileInDirectoryAsync(executableName, subDir.FullName, cancellationToken);
+            bool foundFile = await IsFileInDirectory(executableName, subDir.FullName, cancellationToken);
 
-                if (foundFile)
-                {
-                    return true;
-                }
+            if (foundFile)
+            {
+                return true;
             }
-            return false;
-        }, cancellationToken);
+        }
+
+        return false;
     }
 }
