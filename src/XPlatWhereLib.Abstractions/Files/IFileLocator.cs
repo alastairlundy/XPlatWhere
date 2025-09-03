@@ -20,24 +20,20 @@ public interface IFileLocator
     /// <summary>
     /// </summary>
     /// <param name="fileName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default);
+    Task<string?> LocateFile(string fileName);
 
     /// <summary>
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="directoryPath"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> IsFileInDirectory(string fileName, string directoryPath,
-        CancellationToken cancellationToken = default);
+    bool IsFileInDirectory(string fileName, string directoryPath);
 
     /// <summary>
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="driveName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> IsFileWithinDriveAsync(string fileName, string driveName, CancellationToken cancellationToken = default);
+    bool IsFileWithinDrive(string fileName, string driveName);
 }

@@ -35,5 +35,5 @@ public interface IFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string executableName);
+    IEnumerable<string> LocateFileInstancesWithinDirectory(string directoryPath, string executableName);
 }

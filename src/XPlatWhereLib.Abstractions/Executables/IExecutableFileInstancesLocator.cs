@@ -36,6 +36,6 @@ public interface IExecutableFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateExecutableInstancesWithinDirectory(string directoryPath, 
+    IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath, 
         string executableName);
 }

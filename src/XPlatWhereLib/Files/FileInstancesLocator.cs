@@ -62,15 +62,17 @@ public class FileInstancesLocator : IFileInstancesLocator
 
         DirectoryInfo rootDir = driveInfo.RootDirectory;
 
-        await Parallel.ForEachAsync(rootDir.GetDirectories("*", SearchOption.AllDirectories), 
-            async (subDir, token) =>
+        await Parallel.ForEachAsync(rootDir.GetDirectories("*", SearchOption.AllDirectories), (subDir,
+            token) =>
         {
-            IEnumerable<string> executables = await LocateFileInstancesWithinDirectory(subDir.FullName, fileName);
+            IEnumerable<string> executables = LocateFileInstancesWithinDirectory(subDir.FullName, fileName);
 
             foreach (string executable in executables)
             {
                 output.Add(executable);
             }
+
+            return ValueTask.CompletedTask;
         });
 
         return output;
@@ -82,7 +84,7 @@ public class FileInstancesLocator : IFileInstancesLocator
     /// <param name="directoryPath"></param>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public Task<IEnumerable<string>> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
+    public IEnumerable<string> LocateFileInstancesWithinDirectory(string directoryPath, string fileName)
     {
         List<string> output = new List<string>();
 
@@ -102,6 +104,6 @@ public class FileInstancesLocator : IFileInstancesLocator
             }
         }
 
-        return Task.FromResult<IEnumerable<string>>(output);
+        return output;
     }
 }

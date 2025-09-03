@@ -33,32 +33,30 @@ public class MultiFileLocator : IMultiFileLocator
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-    public async Task<IEnumerable<string>> LocateAllFilesWithinDirectoryAsync(string folder)
+    public Task<IEnumerable<string>> LocateAllFilesWithinDirectoryAsync(string folder)
     {
         ConcurrentBag<string> output = new ConcurrentBag<string>();
-
-        await Task.Run(() =>
+        
+        string folderPath = Path.GetFullPath(folder);
+        
+        if (Directory.Exists(folderPath) == false)
         {
-            string folderPath = Path.GetFullPath(folder);
+            throw new DirectoryNotFoundException(folder);
+        }
         
-            if (Directory.Exists(folderPath) == false)
-            {
-                throw new DirectoryNotFoundException(folder);
-            }
+        string[] directories = Directory.GetDirectories(folder, "*", SearchOption.AllDirectories);
         
-            string[] directories = Directory.GetDirectories(folder, "*", SearchOption.AllDirectories);
-        
-            foreach (string directory in directories)
-            {
-                IEnumerable<string> files = Directory.GetFiles(directory);
+        foreach (string directory in directories)
+        {
+            IEnumerable<string> files = Directory.GetFiles(directory);
 
-                foreach (string file in files)
-                {
-                    output.Add(file);
-                }
+            foreach (string file in files)
+            {
+                output.Add(file);
             }
-        });
-        return output;
+        }
+        
+        return Task.FromResult<IEnumerable<string>>(output);
     }
 
     /// <summary>
@@ -68,14 +66,12 @@ public class MultiFileLocator : IMultiFileLocator
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-    public async Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo)
+    public Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo)
     {
         ConcurrentBag<string> output = new();
 
         DirectoryInfo rootDir = driveInfo.RootDirectory;
-
-        await Task.Run(() =>
-        {
+        
             Parallel.ForEach(rootDir.GetDirectories("*", SearchOption.AllDirectories), async void (subDir) =>
             {
                 IEnumerable<string> executables = await LocateAllFilesWithinDirectoryAsync(subDir.FullName);
@@ -85,8 +81,7 @@ public class MultiFileLocator : IMultiFileLocator
                     output.Add(executable);
                 }
             });
-        });
 
-        return output;
+            return Task.FromResult<IEnumerable<string>>(output);
     }
 }

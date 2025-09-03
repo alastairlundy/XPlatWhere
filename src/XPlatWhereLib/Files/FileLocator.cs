@@ -11,8 +11,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
+
 using System.Threading.Tasks;
+
 using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
 namespace AlastairLundy.XPlatWhereLib.Files;
@@ -22,17 +23,16 @@ public class FileLocator : IFileLocator
     /// <summary>
     /// </summary>
     /// <param name="fileName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> LocateFileAsync(string fileName, CancellationToken cancellationToken = default)
+    public Task<string?> LocateFile(string fileName)
     {
         IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(drive => drive.IsReady);
 
         ConcurrentBag<string> output = new();
 
-        await Parallel.ForEachAsync(drives, cancellationToken, async (drive, token) =>
+        Parallel.ForEach(drives, (drive, token) =>
         {
-            bool result = await IsFileWithinDriveAsync(fileName, drive.Name, token);
+            bool result = IsFileWithinDrive(fileName, drive.Name);
 
             if (result)
             {
@@ -40,7 +40,7 @@ public class FileLocator : IFileLocator
 
                 foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
-                    bool foundExecutable = await IsFileInDirectory(fileName, subDir.FullName, token);
+                    bool foundExecutable = IsFileInDirectory(fileName, subDir.FullName);
 
                     if (foundExecutable)
                     {
@@ -57,20 +57,16 @@ public class FileLocator : IFileLocator
             }
         });
 
-        if (output.Count > 0) return output.First(x => !string.IsNullOrEmpty(x));
-
-        return string.Empty;
+        return Task.FromResult(output.FirstOrDefault(x => !string.IsNullOrEmpty(x)));
     }
 
     /// <summary>
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="directoryPath"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    public Task<bool> IsFileInDirectory(string fileName, string directoryPath,
-        CancellationToken cancellationToken = default)
+    public bool IsFileInDirectory(string fileName, string directoryPath)
     {
         directoryPath = Path.GetFullPath(directoryPath);
         
@@ -84,17 +80,15 @@ public class FileLocator : IFileLocator
        IEnumerable<string?> results = (from dir in directories
             select Directory.GetFiles(dir).FirstOrDefault(x => x.Equals(fileName)));
 
-       return Task.FromResult(results.Any(x => x is not null));
+       return results.Any(x => x is not null);
     }
 
     /// <summary>
     /// </summary>
     /// <param name="executableName"></param>
     /// <param name="driveName"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> IsFileWithinDriveAsync(string executableName, string driveName,
-        CancellationToken cancellationToken = default)
+    public bool IsFileWithinDrive(string executableName, string driveName)
     {
         DriveInfo driveInfo = new DriveInfo(driveName);
 
@@ -102,7 +96,7 @@ public class FileLocator : IFileLocator
         
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
-            bool foundFile = await IsFileInDirectory(executableName, subDir.FullName, cancellationToken);
+            bool foundFile = IsFileInDirectory(executableName, subDir.FullName);
 
             if (foundFile)
             {
