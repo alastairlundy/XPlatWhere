@@ -9,7 +9,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Files;
 

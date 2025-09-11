@@ -8,7 +8,6 @@
  */
 
 using System.IO;
-using System.Threading.Tasks;
 
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 

@@ -7,14 +7,11 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Threading.Tasks;
 using AlastairLundy.DotExtensions.IO.Drives;
-using AlastairLundy.EnhancedLinq.Immediate;
 using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
 namespace AlastairLundy.XPlatWhereLib.Files;

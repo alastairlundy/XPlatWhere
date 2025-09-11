@@ -8,8 +8,6 @@
  */
 
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Files;
 
