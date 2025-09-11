@@ -7,6 +7,8 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.IO;
+
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 
 /// <summary>
@@ -15,16 +17,16 @@ namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 public interface IExecutableFileDetector
 {
     /// <summary>
-    ///     Checks if a given file is executable by verifying its file type.
+    /// Determines if a given file is executable.
     /// </summary>
-    /// <param name="filename">The path to the file to check for executability.</param>
+    /// <param name="file">The file to be checked.</param>
     /// <returns>True if the file can be executed, false otherwise.</returns>
-    bool IsFileExecutable(string filename);
+    bool IsFileExecutable(FileInfo file);
 
     /// <summary>
-    ///     Determines whether a specified file has executable permissions.
+    /// Determines whether a specified file has executable permissions.
     /// </summary>
-    /// <param name="filename">The path and file name of the file to check.</param>
+    /// <param name="file">The file to be checked.</param>
     /// <returns>True if the file has execute permissions, false otherwise.</returns>
-    bool DoesFileHaveExecutablePermissions(string filename);
+    bool DoesFileHaveExecutablePermissions(FileInfo file);
 }
