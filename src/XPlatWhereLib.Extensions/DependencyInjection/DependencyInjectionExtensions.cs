@@ -12,6 +12,7 @@ using AlastairLundy.XPlatWhereLib.Abstractions.Files;
 using AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
 
 using AlastairLundy.XPlatWhereLib.Executables;
+using AlastairLundy.XPlatWhereLib.Executables.Detectors;
 using AlastairLundy.XPlatWhereLib.Files;
 using AlastairLundy.XPlatWhereLib.Prioritizers;
 
