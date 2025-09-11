@@ -7,6 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,9 +38,9 @@ public class ExecutableFileLocator : IExecutableFileLocator
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    public async Task<string?> LocateExecutableAsync(string executableName)
+    public FileInfo? LocateExecutable(string executableName)
     {
-        string? file = await _fileLocator.LocateFile(executableName);
+        FileInfo? file = _fileLocator.LocateFile(executableName);
 
         if (file is null)
             return file;
@@ -47,7 +48,7 @@ public class ExecutableFileLocator : IExecutableFileLocator
         if (_executableFileDetector.IsFileExecutable(file) == false ||
             _executableFileDetector.DoesFileHaveExecutablePermissions(file) == false)
         {
-            return string.Empty;
+            return null;
         }
         
         return file;

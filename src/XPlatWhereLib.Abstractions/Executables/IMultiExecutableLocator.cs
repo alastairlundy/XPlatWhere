@@ -19,14 +19,14 @@ public interface IMultiExecutableLocator
 {
     /// <summary>
     /// </summary>
-    /// <param name="folder"></param>
+    /// <param name="directory"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder);
+    IEnumerable<FileInfo> LocateAllExecutablesWithinDirectoryAsync(DirectoryInfo directory);
 
     /// <summary>
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo);
+    IEnumerable<FileInfo> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo);
 }

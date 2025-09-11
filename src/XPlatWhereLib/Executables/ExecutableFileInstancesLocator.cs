@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Threading.Tasks;
 
 using AlastairLundy.XPlatWhereLib.Abstractions.Executables;
 using AlastairLundy.XPlatWhereLib.Abstractions.Files;
@@ -45,9 +44,9 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-    public async Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName)
+    public IEnumerable<FileInfo> LocateExecutableInstances(string executableName)
     {
-        IEnumerable<string> files = await _fileInstancesLocator.LocateFileInstancesAsync(executableName);
+        IEnumerable<FileInfo> files = _fileInstancesLocator.LocateFileInstances(executableName);
         
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));   
     }
@@ -57,10 +56,10 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
     /// <param name="driveInfo"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo,
+    public IEnumerable<FileInfo> LocateExecutableInstancesWithinDrive(DriveInfo driveInfo,
         string executableName)
     {
-        IEnumerable<string> files = await _fileInstancesLocator.LocateFileInstancesWithinDriveAsync(driveInfo,
+        IEnumerable<FileInfo> files = _fileInstancesLocator.LocateFileInstancesWithinDrive(driveInfo,
             executableName);
         
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));
@@ -68,13 +67,13 @@ public class ExecutableFileInstancesLocator : IExecutableFileInstancesLocator
 
     /// <summary>
     /// </summary>
-    /// <param name="directoryPath"></param>
+    /// <param name="directory"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    public IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath,
+    public IEnumerable<FileInfo> LocateExecutableInstancesWithinDirectory(DirectoryInfo directory,
         string executableName)
     {
-        IEnumerable<string> files = _fileInstancesLocator.LocateFileInstancesWithinDirectory(directoryPath,
+        IEnumerable<FileInfo> files = _fileInstancesLocator.LocateFileInstancesWithinDirectory(directory,
             executableName);
         
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));

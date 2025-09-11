@@ -21,19 +21,19 @@ public interface IFileInstancesLocator
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateFileInstancesAsync(string executableName);
+    IEnumerable<FileInfo> LocateFileInstances(string executableName);
 
     /// <summary>
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateFileInstancesWithinDriveAsync(DriveInfo driveInfo, string executableName);
+    IEnumerable<FileInfo> LocateFileInstancesWithinDrive(DriveInfo driveInfo, string executableName);
 
     /// <summary>
     /// </summary>
-    /// <param name="directoryPath"></param>
+    /// <param name="directory"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    IEnumerable<string> LocateFileInstancesWithinDirectory(string directoryPath, string executableName);
+    IEnumerable<FileInfo> LocateFileInstancesWithinDirectory(DirectoryInfo directory, string executableName);
 }

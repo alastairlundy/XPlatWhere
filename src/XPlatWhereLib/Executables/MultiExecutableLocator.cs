@@ -40,15 +40,15 @@ public class MultiExecutableLocator : IMultiExecutableLocator
 
     /// <summary>
     /// </summary>
-    /// <param name="folder"></param>
+    /// <param name="directory"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-    public async Task<IEnumerable<string>> LocateAllExecutablesWithinDirectoryAsync(string folder)
+    public IEnumerable<FileInfo> LocateAllExecutablesWithinDirectoryAsync(DirectoryInfo directory)
     {
-        IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDirectoryAsync(folder);
+        IEnumerable<FileInfo> files = _multiFileLocator.LocateAllFilesWithinDirectoryAsync(directory);
 
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));
     }
@@ -60,9 +60,9 @@ public class MultiExecutableLocator : IMultiExecutableLocator
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("macos")]
     [SupportedOSPlatform("linux")]
-    public async Task<IEnumerable<string>> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
+    public IEnumerable<FileInfo> LocateAllExecutablesWithinDriveAsync(DriveInfo driveInfo)
     {
-        IEnumerable<string> files = await _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);
+        IEnumerable<FileInfo> files = _multiFileLocator.LocateAllFilesWithinDriveAsync(driveInfo);
 
         return files.Where(file => _executableFileDetector.IsFileExecutable(file));
     }

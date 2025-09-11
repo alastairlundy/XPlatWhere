@@ -21,21 +21,21 @@ public interface IExecutableFileInstancesLocator
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateExecutableInstancesAsync(string executableName);
+    IEnumerable<FileInfo> LocateExecutableInstances(string executableName);
 
     /// <summary>
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateExecutableInstancesWithinDriveAsync(DriveInfo driveInfo, 
+    IEnumerable<FileInfo> LocateExecutableInstancesWithinDrive(DriveInfo driveInfo,
         string executableName);
 
     /// <summary>
     /// </summary>
-    /// <param name="directoryPath"></param>
+    /// <param name="directory"></param>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    IEnumerable<string> LocateExecutableInstancesWithinDirectory(string directoryPath, 
+    IEnumerable<FileInfo> LocateExecutableInstancesWithinDirectory(DirectoryInfo directory,
         string executableName);
 }

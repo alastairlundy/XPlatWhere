@@ -7,6 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,19 +22,19 @@ public interface IFileLocator
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    Task<string?> LocateFile(string fileName);
+    FileInfo? LocateFile(string fileName);
 
     /// <summary>
     /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="directoryPath"></param>
+    /// <param name="file"></param>
+    /// <param name="directory"></param>
     /// <returns></returns>
-    bool IsFileInDirectory(string fileName, string directoryPath);
+    bool IsFileInDirectory(FileInfo file, DirectoryInfo directory);
 
     /// <summary>
     /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="driveName"></param>
+    /// <param name="file"></param>
+    /// <param name="drive"></param>
     /// <returns></returns>
-    bool IsFileWithinDrive(string fileName, string driveName);
+    bool IsFileWithinDrive(FileInfo file, DriveInfo drive);
 }

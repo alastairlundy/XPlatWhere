@@ -19,14 +19,14 @@ public interface IMultiFileLocator
 {
     /// <summary>
     /// </summary>
-    /// <param name="folder"></param>
+    /// <param name="directory"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    Task<IEnumerable<string>> LocateAllFilesWithinDirectoryAsync(string folder);
+    IEnumerable<FileInfo> LocateAllFilesWithinDirectoryAsync(DirectoryInfo directory);
 
     /// <summary>
     /// </summary>
     /// <param name="driveInfo"></param>
     /// <returns></returns>
-    Task<IEnumerable<string>> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo);
+    IEnumerable<FileInfo> LocateAllFilesWithinDriveAsync(DriveInfo driveInfo);
 }

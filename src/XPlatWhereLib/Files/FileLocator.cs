@@ -24,15 +24,17 @@ public class FileLocator : IFileLocator
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public Task<string?> LocateFile(string fileName)
+    public FileInfo? LocateFile(string fileName)
     {
         IEnumerable<DriveInfo> drives = DriveInfo.GetDrives().Where(drive => drive.IsReady);
+        
+        ConcurrentBag<FileInfo> output = new();
 
-        ConcurrentBag<string> output = new();
-
+        FileInfo file = new(fileName);
+        
         Parallel.ForEach(drives, (drive, token) =>
         {
-            bool result = IsFileWithinDrive(fileName, drive.Name);
+            bool result = IsFileWithinDrive(file, drive);
 
             if (result)
             {
@@ -40,15 +42,15 @@ public class FileLocator : IFileLocator
 
                 foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
-                    bool foundExecutable = IsFileInDirectory(fileName, subDir.FullName);
+                    bool foundExecutable = IsFileInDirectory(file, subDir);
 
                     if (foundExecutable)
                     {
-                        foreach (FileInfo file in subDir.GetFiles("*", SearchOption.AllDirectories))
+                        foreach (FileInfo executable in subDir.GetFiles("*", SearchOption.AllDirectories))
                         {
-                            if (file.Name.Equals(fileName))
+                            if (executable.Name.Equals(fileName))
                             {
-                                output.Add(file.FullName);
+                                output.Add(executable);
                                 return;
                             }
                         }
@@ -57,46 +59,50 @@ public class FileLocator : IFileLocator
             }
         });
 
-        return Task.FromResult(output.FirstOrDefault(x => !string.IsNullOrEmpty(x)));
+        return output.FirstOrDefault(x => !string.IsNullOrEmpty(x.FullName));
     }
 
     /// <summary>
     /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="directoryPath"></param>
+    /// <param name="file"></param>
+    /// <param name="directory"></param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
-    public bool IsFileInDirectory(string fileName, string directoryPath)
+    public bool IsFileInDirectory(FileInfo file, DirectoryInfo directory)
     {
-        directoryPath = Path.GetFullPath(directoryPath);
-        
-        if (Directory.Exists(directoryPath) == false)
+        if (Directory.Exists(directory.FullName) == false)
         {
-            throw new DirectoryNotFoundException(directoryPath);
+            throw new DirectoryNotFoundException();
         }
             
-        string[] directories = Directory.GetDirectories(directoryPath, "*", SearchOption.AllDirectories);
+        IEnumerable<DirectoryInfo> directories = directory.EnumerateDirectories("*",
+            SearchOption.AllDirectories);
 
-       IEnumerable<string?> results = (from dir in directories
-            select Directory.GetFiles(dir).FirstOrDefault(x => x.Equals(fileName)));
+        foreach (DirectoryInfo dir in directories)
+        {
+            IEnumerable<FileInfo> files = dir.EnumerateFiles();
+            
+           bool foundFile = files.Any(x => x.Equals(file));
+           
+           if(foundFile)
+               return true;
+        }
 
-       return results.Any(x => x is not null);
+        return false;
     }
 
     /// <summary>
     /// </summary>
-    /// <param name="executableName"></param>
-    /// <param name="driveName"></param>
+    /// <param name="file"></param>
+    /// <param name="drive"></param>
     /// <returns></returns>
-    public bool IsFileWithinDrive(string executableName, string driveName)
+    public bool IsFileWithinDrive(FileInfo file, DriveInfo drive)
     {
-        DriveInfo driveInfo = new DriveInfo(driveName);
-
-        DirectoryInfo rootDir = driveInfo.RootDirectory;
+        DirectoryInfo rootDir = drive.RootDirectory;
         
         foreach (DirectoryInfo subDir in rootDir.GetDirectories("*", SearchOption.AllDirectories))
         {
-            bool foundFile = IsFileInDirectory(executableName, subDir.FullName);
+            bool foundFile = IsFileInDirectory(file, subDir);
 
             if (foundFile)
             {

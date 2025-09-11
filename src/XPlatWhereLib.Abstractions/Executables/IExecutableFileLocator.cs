@@ -7,6 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Executables;
@@ -20,5 +21,5 @@ public interface IExecutableFileLocator
     /// </summary>
     /// <param name="executableName"></param>
     /// <returns></returns>
-    Task<string?> LocateExecutableAsync(string executableName);
+    FileInfo? LocateExecutable(string executableName);
 }
