@@ -11,6 +11,9 @@ using System.Collections.Generic;
 
 namespace AlastairLundy.XPlatWhereLib.Abstractions.Prioritizers;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IDirectoryListPrioritizer
 {
     /// <summary>
@@ -43,7 +46,7 @@ public interface IDirectoryListPrioritizer
     IList<string> PrioritizeUserApplicationDirectories(IEnumerable<string> directories);
 
     /// <summary>
-    ///     /
+    ///     
     /// </summary>
     /// <param name="directories"></param>
     /// <returns></returns>

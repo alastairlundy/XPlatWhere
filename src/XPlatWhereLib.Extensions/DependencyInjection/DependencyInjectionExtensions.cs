@@ -36,30 +36,24 @@ public static class DependencyInjectionExtensions
             case ServiceLifetime.Scoped:
                 services.AddScoped<IDirectoryListPrioritizer, DirectoryListPrioritizer>();
                 services.AddScoped<IExecutableFileDetector, ExecutableFileDetector>();
-                services.AddScoped<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddScoped<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddScoped<IMultiExecutableLocator, MultiExecutableLocator>();
-                services.AddScoped<IFileLocator, FileLocator>();
                 services.AddScoped<IMultiFileLocator, MultiFileLocator>();
                 services.AddScoped<IFileInstancesLocator, FileInstancesLocator>();
                 break;
             case ServiceLifetime.Singleton:
                 services.AddSingleton<IDirectoryListPrioritizer, DirectoryListPrioritizer>();
                 services.AddSingleton<IExecutableFileDetector, ExecutableFileDetector>();
-                services.AddSingleton<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddSingleton<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddSingleton<IMultiExecutableLocator, MultiExecutableLocator>();
-                services.AddSingleton<IFileLocator, FileLocator>();
                 services.AddSingleton<IMultiFileLocator, MultiFileLocator>();
                 services.AddSingleton<IFileInstancesLocator, FileInstancesLocator>();
                 break;
             case ServiceLifetime.Transient:
                 services.AddTransient<IDirectoryListPrioritizer, DirectoryListPrioritizer>();
                 services.AddTransient<IExecutableFileDetector, ExecutableFileDetector>();
-                services.AddTransient<IExecutableFileLocator, ExecutableFileLocator>();
                 services.AddTransient<IExecutableFileInstancesLocator, ExecutableFileInstancesLocator>();
                 services.AddTransient<IMultiExecutableLocator, MultiExecutableLocator>();
-                services.AddTransient<IFileLocator, FileLocator>();
                 services.AddTransient<IMultiFileLocator, MultiFileLocator>();
                 services.AddTransient<IFileInstancesLocator, FileInstancesLocator>();
                 break;
