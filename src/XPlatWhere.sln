@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlatWhereLib", "XPlatWhereLib\XPlatWhereLib.csproj", "{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XpWhereLib.Extensions", "XpWhereLib.Extensions\XpWhereLib.Extensions.csproj", "{851965D2-E790-4FFE-BE58-2BDDD5BA93B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlatWhereLib.Extensions", "XPlatWhereLib.Extensions\XPlatWhereLib.Extensions.csproj", "{851965D2-E790-4FFE-BE58-2BDDD5BA93B2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlatWhereLib.Abstractions", "XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj", "{BDEB6E29-0700-4A63-943F-B431867DF905}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XpWhereLib.Abstractions", "XpWhereLib.Abstractions\XpWhereLib.Abstractions.csproj", "{BDEB6E29-0700-4A63-943F-B431867DF905}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ui", "ui", "{0B6D7ED9-0209-45A5-9817-DCD7408B3171}"
 EndProject
@@ -12,16 +10,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logic", "logic", "{A35C4848
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XpWhere", "XpWhere\XpWhere.csproj", "{218CC924-69CB-44C3-9A97-5BFC978F76B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XpWhereLib", "XpWhereLib\XpWhereLib.csproj", "{4C611BD7-3DEF-4790-9EEE-75B7A74A6656}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{851965D2-E790-4FFE-BE58-2BDDD5BA93B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{851965D2-E790-4FFE-BE58-2BDDD5BA93B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{851965D2-E790-4FFE-BE58-2BDDD5BA93B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -34,11 +30,15 @@ Global
 		{218CC924-69CB-44C3-9A97-5BFC978F76B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{218CC924-69CB-44C3-9A97-5BFC978F76B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{218CC924-69CB-44C3-9A97-5BFC978F76B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C611BD7-3DEF-4790-9EEE-75B7A74A6656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C611BD7-3DEF-4790-9EEE-75B7A74A6656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C611BD7-3DEF-4790-9EEE-75B7A74A6656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C611BD7-3DEF-4790-9EEE-75B7A74A6656}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{EDEC5B56-4CEE-4BA3-958D-6B9186A7F48E} = {A35C4848-CF5A-4AEC-B180-3930B02BD424}
 		{BDEB6E29-0700-4A63-943F-B431867DF905} = {A35C4848-CF5A-4AEC-B180-3930B02BD424}
 		{851965D2-E790-4FFE-BE58-2BDDD5BA93B2} = {A35C4848-CF5A-4AEC-B180-3930B02BD424}
 		{218CC924-69CB-44C3-9A97-5BFC978F76B4} = {0B6D7ED9-0209-45A5-9817-DCD7408B3171}
+		{4C611BD7-3DEF-4790-9EEE-75B7A74A6656} = {A35C4848-CF5A-4AEC-B180-3930B02BD424}
 	EndGlobalSection
 EndGlobal
