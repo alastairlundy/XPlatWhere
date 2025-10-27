@@ -1,15 +1,12 @@
+using System.Threading;
 using Spectre.Console.Cli;
 
 namespace XpWhere.Commands;
 
 public class LicenseCommand : Command
 {
-    public override int Execute(CommandContext context)
+    public override int Execute(CommandContext context, CancellationToken cancellationToken)
     {
-       
-        
-        
-        
-        return 0;
+        throw new System.NotImplementedException();
     }
 }
