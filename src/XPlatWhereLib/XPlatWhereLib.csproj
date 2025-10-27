@@ -26,7 +26,7 @@
         <PackageReference Include="AlastairLundy.DotExtensions" Version="9.0.0-preview.1" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AlastairLundy.EnhancedLinq" Version="0.8.0" />
+        <PackageReference Include="AlastairLundy.EnhancedLinq" Version="0.9.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\XPlatWhereLib.Abstractions\XPlatWhereLib.Abstractions.csproj"/>
