@@ -21,9 +21,6 @@
         <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AlastairLundy.EnhancedLinq" Version="0.9.0" />
-    </ItemGroup>
-    <ItemGroup>
         <ProjectReference Include="..\XpWhereLib.Abstractions\XpWhereLib.Abstractions.csproj" />
     </ItemGroup>
 </Project>
